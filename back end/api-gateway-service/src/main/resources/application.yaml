@@ -25,6 +25,11 @@ spring:
           predicates:
             - Path=/movie-service/**
 
+        - id: booking-service
+          uri: lb://booking-service
+          predicates:
+            - Path=/booking-service/**
+
         - id: payment-service
           uri: lb://payment-service
           predicates:

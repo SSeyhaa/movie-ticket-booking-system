@@ -1,7 +1,7 @@
 server:
-  port: 8083
+  port: 8082
   servlet:
-    context-path: /payment-service
+    context-path: /booking-service
 
 eureka:
   client:
@@ -12,11 +12,11 @@ eureka:
 
 spring:
   application:
-    name: payment-service
+    name: booking-service
 
   # Database configuration
   datasource:
-    url: jdbc:postgresql://localhost:5432/payment
+    url: jdbc:postgresql://localhost:5432/booking
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver

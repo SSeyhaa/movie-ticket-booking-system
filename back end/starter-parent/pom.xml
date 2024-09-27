@@ -35,6 +35,7 @@
 	<modules>
 		<module>../user-service</module>
 		<module>../movie-service</module>
+		<module>../booking-service</module>
 		<module>../payment-service</module>
 		<module>../feedback-service</module>
 		<module>../notification-service</module>
