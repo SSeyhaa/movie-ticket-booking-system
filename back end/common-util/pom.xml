@@ -9,14 +9,10 @@
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../starter-parent/pom.xml</relativePath>
 	</parent>
-	<artifactId>feedback-service</artifactId>
+	<artifactId>common-util</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>feedback-service</name>
-	<description>
-		The Movie Ticket Booking System is designed to allow users to browse available movies, select show times,
-		book tickets, and make payments online. The system is composed of multiple microservices, each handling
-		different parts of the application, like movie listings, theaters, payments, notifications, and user management.
-	</description>
+	<name>common-util</name>
+	<description>Common utilities, DTOs, and shared components for Movie Ticket Booking System</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -31,29 +27,18 @@
 		<url/>
 	</scm>
 	<properties>
-		<java.version>21</java.version>
 	</properties>
 	<dependencies>
-		<dependency>
-			<groupId>com.legend</groupId>
-			<artifactId>common-util</artifactId>
-			<version>${common-util.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
 		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<scope>runtime</scope>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
@@ -63,11 +48,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 		</dependency>
 	</dependencies>
 
