@@ -6,11 +6,11 @@
 		<!-- Reference to the custom parent -->
 		<groupId>com.legend</groupId>
 		<artifactId>starter-parent</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>1.0.0</version>  <!-- project version -->
 		<relativePath>../starter-parent/pom.xml</relativePath>
 	</parent>
 	<artifactId>common-util</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>  <!-- project version -->
 	<name>common-util</name>
 	<description>Common utilities, DTOs, and shared components for Movie Ticket Booking System</description>
 	<url/>

@@ -6,11 +6,11 @@
 		<!-- Reference to the custom parent -->
 		<groupId>com.legend</groupId>
 		<artifactId>starter-parent</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>1.0.0</version>  <!-- project version -->
 		<relativePath>../starter-parent/pom.xml</relativePath>
 	</parent>
 	<artifactId>discovery-service</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>  <!-- project version -->
 	<name>discovery-service</name>
 	<description>
 		The Movie Ticket Booking System is designed to allow users to browse available movies, select show times,
