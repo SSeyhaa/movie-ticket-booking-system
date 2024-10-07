@@ -16,7 +16,7 @@ spring:
 
   # Database configuration
   datasource:
-    url: jdbc:postgresql://localhost:5432/notification
+    url: jdbc:postgresql://localhost:5432/notification-database
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver

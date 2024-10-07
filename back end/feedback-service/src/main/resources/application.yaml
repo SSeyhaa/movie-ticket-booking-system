@@ -16,7 +16,7 @@ spring:
 
   # Database configuration
   datasource:
-    url: jdbc:postgresql://localhost:5432/feedback
+    url: jdbc:postgresql://localhost:5432/feedback-database
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver

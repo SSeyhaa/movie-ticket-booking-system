@@ -21,7 +21,7 @@ spring:
 
   # Database configuration
   datasource:
-    url: jdbc:postgresql://localhost:5432/user
+    url: jdbc:postgresql://localhost:5432/user-database
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
