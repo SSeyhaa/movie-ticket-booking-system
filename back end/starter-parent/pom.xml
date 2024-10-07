@@ -40,8 +40,8 @@
 		<module>../payment-service</module>
 		<module>../feedback-service</module>
 		<module>../notification-service</module>
-		<module>../discovery-service</module>
 		<module>../api-gateway-service</module>
+		<module>../discovery-service</module>
 		<!-- Add more child services as needed -->
 	</modules>
 
@@ -74,14 +74,6 @@
 				<scope>test</scope>
 			</dependency>
 
-<!--			<dependency>-->
-<!--				<groupId>org.springframework.cloud</groupId>-->
-<!--				<artifactId>spring-cloud-dependencies</artifactId>-->
-<!--				<version>${spring-cloud.version}</version>-->
-<!--				<type>pom</type>-->
-<!--				<scope>import</scope>-->
-<!--			</dependency>-->
-
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-starter-gateway</artifactId>
@@ -92,11 +84,7 @@
 				<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 				<version>${spring-cloud.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
-				<version>${spring-cloud.version}</version>
-			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 
