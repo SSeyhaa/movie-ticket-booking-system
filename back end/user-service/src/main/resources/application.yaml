@@ -35,3 +35,16 @@ spring:
       hibernate:
         format_sql: true
 
+
+app:
+  keycloak:
+    server-url: http://localhost:8080
+    realm: movie-ticket-booking-realm
+    client-id: user-service
+    client-secret: K3SOD7RG4GaRYMJpgpemyaGgpw3YRLpe
+    username-super-admin: super-admin
+    password-super-admin: 123
+    email-super-admin: super.admin@gmail.com
+    first-name-super-admin: admin
+    last-name-super-admin: admin
+
