@@ -3,6 +3,7 @@ package com.legend.user_service.service;
 import com.legend.user_service.config.KeycloakProperty;
 import com.legend.user_service.constant.Role;
 import com.legend.user_service.dto.request.UserRequest;
+import com.legend.user_service.exception.RoleAssignmentException;
 import com.legend.user_service.exception.UserAlreadyExistsException;
 import com.legend.user_service.exception.UserCreationException;
 import jakarta.ws.rs.core.Response;
@@ -90,14 +91,26 @@ public class KeycloakService {
     RolesResource rolesResource = realmResource.roles();
     List<RoleRepresentation> rolesRepresentation = new ArrayList<>();
 
-    roles.forEach(
-        role -> {
-          RoleResource roleResource = rolesResource.get(role.name());
-          rolesRepresentation.add(roleResource.toRepresentation());
-        });
-    userResource
-        .roles()
-        .realmLevel()
-        .add(rolesRepresentation); // todo: in case failed, remove user from keycloak
+    try {
+      roles.forEach(
+          role -> {
+            RoleResource roleResource = rolesResource.get(role.name());
+            rolesRepresentation.add(roleResource.toRepresentation());
+          });
+      userResource.roles().realmLevel().add(rolesRepresentation);
+    } catch (Exception e) {
+      userResource.remove();
+
+      log.error("----- Failed to assign roles to user");
+      throw new RoleAssignmentException("Failed to assign roles to user", e);
+    }
+  }
+
+  public void deleteUserById(String userId) {
+    RealmResource realmResource = keycloak.realm(keycloakProperty.getRealm());
+    UsersResource usersResource = realmResource.users();
+    UserResource userResource = usersResource.get(userId);
+    userResource.remove();
+    log.info("----- User with id {} deleted successfully in Keycloak server", userId);
   }
 }

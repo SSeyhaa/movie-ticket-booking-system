@@ -41,6 +41,16 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
   }
 
+  @ExceptionHandler(RoleAssignmentException.class)
+  public ResponseEntity<ErrorResponse> handleRoleAssignmentException(
+      RoleAssignmentException e, WebRequest request) {
+
+    ErrorResponse errorResponse =
+        buildErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage(), request.getDescription(false));
+
+    return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+  }
+
   private ErrorResponse buildErrorResponse(HttpStatus status, String message, String path) {
 
     return ErrorResponse.builder()

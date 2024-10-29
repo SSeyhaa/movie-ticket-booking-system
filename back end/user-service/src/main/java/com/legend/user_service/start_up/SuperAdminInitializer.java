@@ -23,7 +23,7 @@ public class SuperAdminInitializer {
     try {
       userService.create(buildSuperAdminProperty());
     } catch (Exception e) {
-      log.info("----- Super admin already exists");
+      log.info("----- [Super admin]: {}", e.getMessage());
     }
   }
 
