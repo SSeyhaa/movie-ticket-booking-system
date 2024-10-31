@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.annotation.Order;
 
 @Configuration
 @RequiredArgsConstructor
@@ -19,6 +20,7 @@ public class SuperAdminInitializer {
   private final UserService userService;
 
   @EventListener(ApplicationReadyEvent.class)
+  @Order(2)
   public void initialize() {
     try {
       userService.create(buildSuperAdminProperty());
