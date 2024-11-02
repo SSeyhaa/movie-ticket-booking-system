@@ -15,8 +15,6 @@ import lombok.Setter;
 @Builder
 public class UserRequest {
 
-  private Long id;
-
   private String keycloakId;
   private String profileImagePath;
   private String username;

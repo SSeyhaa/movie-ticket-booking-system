@@ -48,7 +48,8 @@ public class KeycloakService {
 
         if (response.getStatus() != HTTP_STATUS_CREATED) {
           log.error("----- Failed to create user in Keycloak server");
-          throw new UserCreationException("Failed to create user in Keycloak server");
+          throw new UserCreationException(
+              "Failed to create user in Keycloak server : " + response.getStatusInfo());
         }
 
         String userId = CreatedResponseUtil.getCreatedId(response);

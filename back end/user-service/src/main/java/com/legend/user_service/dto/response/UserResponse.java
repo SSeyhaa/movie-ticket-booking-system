@@ -21,7 +21,6 @@ public class UserResponse {
   private String profileImagePath;
   private String username;
   private String email;
-  private Set<Role> roles;
   private String firstName;
   private String lastName;
   private String phoneNumber;

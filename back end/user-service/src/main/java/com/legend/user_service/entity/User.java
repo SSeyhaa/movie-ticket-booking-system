@@ -1,7 +1,10 @@
 package com.legend.user_service.entity;
 
 import com.legend.common_util.audit.Auditable;
+import com.legend.user_service.constant.Role;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,6 +27,10 @@ public class User extends Auditable {
   private Long id;
 
   private String keycloakId;
+
+  @Enumerated(EnumType.STRING)
+  private Role role;
+
   private String profileImagePath;
   private String username;
   private String email;
