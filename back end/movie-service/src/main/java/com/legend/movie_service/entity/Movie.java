@@ -1,0 +1,40 @@
+package com.legend.movie_service.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Table(name = "movies")
+@AllArgsConstructor
+@NoArgsConstructor
+@Setter
+@Getter
+public class Movie {
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+
+  private String title;
+  private String posterPath;
+  private String description;
+  private LocalDateTime releasedDate;
+  private int durationMin;
+  private String genre;
+
+  @Column(name = "\"cast\"")
+  private String cast;
+
+  private String language;
+  private String country;
+  private String trailerUrl;
+}
