@@ -1,12 +1,12 @@
 server:
-  port: 8081
+  port: ${USER_SERVICE_PORT}
   servlet:
-    context-path: /user-service
+    context-path: ${USER_SERVICE_CONTEXT_PATH}
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: ${DISCOVERY_SERVICE_URL}
   instance:
     preferIpAddress: true
 
@@ -17,13 +17,13 @@ logging:
 
 spring:
   application:
-    name: user-service
+    name: ${USER_SERVICE_NAME}
 
   # Database configuration
   datasource:
-    url: jdbc:postgresql://localhost:5432/user-database
-    username: postgres
-    password: postgres
+    url: jdbc:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/${USER_SERVICE_DATABASE}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   # JPA configuration
@@ -38,13 +38,13 @@ spring:
 
 app:
   keycloak:
-    server-url: http://localhost:8080
-    realm: movie-ticket-booking-realm
-    client-id: user-service
-    client-secret: K3SOD7RG4GaRYMJpgpemyaGgpw3YRLpe
-    username-super-admin: super-admin
-    password-super-admin: 123
-    email-super-admin: super.admin@gmail.com
-    first-name-super-admin: admin
-    last-name-super-admin: admin
+    server-url: ${KEYCLOAK_URL}
+    realm: ${KEYCLOAK_REALM}
+    client-id: ${USER_SERVICE_KEYCLOAK_CLIENT_ID}
+    client-secret: ${USER_SERVICE_KEYCLOAK_CLIENT_SECRET:ZhkWRhYC4JpmRVHIObMnFPxPWUVajkGR}
+    email-super-admin: ${KEYCLOAK_EMAIL_SUPER_ADMIN}
+    username-super-admin: ${KEYCLOAK_USERNAME_SUPER_ADMIN}
+    password-super-admin: ${KEYCLOAK_PASSWORD_SUPER_ADMIN}
+    first-name-super-admin: ${KEYCLOAK_FIRST_NAME_SUPER_ADMIN}
+    last-name-super-admin: ${KEYCLOAK_LAST_NAME_SUPER_ADMIN}
 

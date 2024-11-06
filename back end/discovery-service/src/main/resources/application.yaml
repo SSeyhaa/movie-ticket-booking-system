@@ -1,5 +1,5 @@
 server:
-  port: 8761
+  port: ${DISCOVERY_SERVICE_PORT}
 
 eureka:
   client:
@@ -8,5 +8,5 @@ eureka:
 
 spring:
   application:
-    name: eureka-server
+    name: ${DISCOVERY_SERVICE_NAME}
 

@@ -1,24 +1,24 @@
 server:
-  port: 8085
+  port: ${NOTIFICATION_SERVICE_PORT}
   servlet:
-    context-path: /notification-service
+    context-path: ${NOTIFICATION_SERVICE_CONTEXT_PATH}
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: ${DISCOVERY_SERVICE_URL}
   instance:
     preferIpAddress: true
 
 spring:
   application:
-    name: notification-service
+    name: ${NOTIFICATION_SERVICE_NAME}
 
   # Database configuration
   datasource:
-    url: jdbc:postgresql://localhost:5432/notification-database
-    username: postgres
-    password: postgres
+    url: jdbc:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/${NOTIFICATION_SERVICE_DATABASE}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   # JPA configuration

@@ -1,46 +1,46 @@
 server:
-  port: 8443
+  port: ${GATEWAY_SERVICE_PORT}
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: ${DISCOVERY_SERVICE_URL}
   instance:
     preferIpAddress: true
 
 spring:
   application:
-    name: api-gateway-service
+    name: ${GATEWAY_SERVICE_NAME}
 
   cloud:
     gateway:
       routes:
-        - id: user-service
-          uri: lb://user-service
+        - id: ${USER_SERVICE_NAME}
+          uri: lb://${USER_SERVICE_NAME}
           predicates:
-            - Path=/user-service/**
+            - Path=/${USER_SERVICE_NAME}/**
 
-        - id: movie-service
-          uri: lb://movie-service
+        - id: ${MOVIE_SERVICE_NAME}
+          uri: lb://${MOVIE_SERVICE_NAME}
           predicates:
-            - Path=/movie-service/**
+            - Path=/${MOVIE_SERVICE_NAME}/**
 
-        - id: booking-service
-          uri: lb://booking-service
+        - id: ${BOOKING_SERVICE_NAME}
+          uri: lb://${BOOKING_SERVICE_NAME}
           predicates:
-            - Path=/booking-service/**
+            - Path=/${BOOKING_SERVICE_NAME}/**
 
-        - id: payment-service
-          uri: lb://payment-service
+        - id: ${PAYMENT_SERVICE_NAME}
+          uri: lb://${PAYMENT_SERVICE_NAME}
           predicates:
-            - Path=/payment-service/**
+            - Path=/${PAYMENT_SERVICE_NAME}/**
 
-        - id: feedback-service
-          uri: lb://feedback-service
+        - id: ${FEEDBACK_SERVICE_NAME}
+          uri: lb://${FEEDBACK_SERVICE_NAME}
           predicates:
-            - Path=/feedback-service/**
+            - Path=/${FEEDBACK_SERVICE_NAME}/**
 
-        - id: notification-service
-          uri: lb://notification-service
+        - id: ${NOTIFICATION_SERVICE_NAME}
+          uri: lb://${NOTIFICATION_SERVICE_NAME}
           predicates:
-            - Path=/notification-service/**
+            - Path=/${NOTIFICATION_SERVICE_NAME}/**
