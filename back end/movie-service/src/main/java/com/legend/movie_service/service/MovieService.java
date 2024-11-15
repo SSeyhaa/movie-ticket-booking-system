@@ -32,7 +32,7 @@ public class MovieService {
     movieRepository.delete(movie);
   }
 
-  private Movie findMovieById(Long id) {
+  public Movie findMovieById(Long id) {
     return movieRepository
         .findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Movie not found with id: " + id));
