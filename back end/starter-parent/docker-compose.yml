@@ -1,0 +1,164 @@
+version: '3.8'
+
+services:
+  discovery-server:
+    build:
+      context: ../discovery-service/.
+    image: discovery-service:1.0.0
+    ports:
+      - ${DISCOVERY_SERVICE_PORT}:${DISCOVERY_SERVICE_PORT}
+    environment:
+      - _JAVA_OPTIONS=-Xmx512m -Xms256m
+    env_file:
+      - .env  # Loads environment variables from .env file
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:${DISCOVERY_SERVICE_PORT}/actuator/health" ]
+      interval: 60s
+      timeout: 30s
+      retries: 5
+      start_period: 60s
+    restart: unless-stopped
+    networks:
+      - internal-network
+
+
+  api-gateway-service:
+    build:
+      context: ../api-gateway-service/.
+    image: api-gateway-service:1.0.0
+    ports:
+      - ${GATEWAY_SERVICE_PORT}:${GATEWAY_SERVICE_PORT}
+    environment:
+      - _JAVA_OPTIONS=-Xmx512m -Xms256m
+    env_file:
+      - .env
+    depends_on:
+      discovery-server:
+        condition: service_started
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:${GATEWAY_SERVICE_PORT}/actuator/health" ]
+      interval: 60s
+      timeout: 30s
+      retries: 5
+      start_period: 60s
+    restart: unless-stopped
+    networks:
+      - internal-network
+
+
+  user-service:
+    build:
+      context: ../user-service/.
+    image: user-service:1.0.0
+    ports:
+      - ${USER_SERVICE_PORT}:${USER_SERVICE_PORT}
+    environment:
+      - _JAVA_OPTIONS=-Xmx512m -Xms256m
+    env_file:
+      - .env
+    depends_on:
+      discovery-server:
+        condition: service_started
+      api-gateway-service:
+        condition: service_started
+      keycloak-server:
+        condition: service_started
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:${USER_SERVICE_PORT}/actuator/health" ]
+      interval: 60s
+      timeout: 30s
+      retries: 5
+      start_period: 60s
+    restart: unless-stopped
+    networks:
+      - internal-network
+
+
+  postgres-db:
+    image: postgres:17-alpine
+    ports:
+      - "${DATABASE_PORT}:${DATABASE_PORT}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      - POSTGRES_USER=${DATABASE_USERNAME}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME} -d ${USER_SERVICE_DATABASE}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command:
+      - "postgres"
+      - "-c"
+      - "max_connections=100"
+      - "-c"
+      - "shared_buffers=256MB"
+    restart: unless-stopped
+    networks:
+      - internal-network
+
+
+  keycloak-server:
+    image: quay.io/keycloak/keycloak:24.0
+    environment:
+
+      # Hostname configuration
+      KC_HOSTNAME: ${KEYCLOAK_HOST}
+      KC_HOSTNAME_PORT: ${KEYCLOAK_PORT}
+      KC_HOSTNAME_STRICT: false
+      KC_HOSTNAME_STRICT_HTTPS: false
+      KC_HTTP_ENABLED: true
+
+      # Admin credentials
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_UI}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres-db:${DATABASE_PORT}/${KEYCLOAK_DB}
+      KC_DB_USERNAME: ${DATABASE_USERNAME}
+      KC_DB_PASSWORD: ${DATABASE_PASSWORD}
+      KC_DB_SCHEMA: public
+
+      KC_HEALTH_ENABLED: "true"
+      KC_LOG_LEVEL: info
+
+    volumes:
+      - ./keycloak:/opt/keycloak/data/import
+      - keycloak_data:/opt/keycloak/data # backup volume for Keycloak
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://${KEYCLOAK_HOST}:8080/health/ready" ]
+      interval: 15s
+      timeout: 2s
+      retries: 15
+    command:
+      - start-dev
+      - --hostname-strict=false
+      - --hostname=localhost
+      - --http-port=${KEYCLOAK_PORT}
+      - --import-realm
+    ports:
+      - ${KEYCLOAK_PORT}:${KEYCLOAK_PORT}
+    env_file:
+      - .env
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - internal-network
+
+
+volumes:
+  postgres_data:
+    driver: local
+  keycloak_data:
+    driver: local
+
+networks:
+  internal-network: # Internal network for communication between services
+    driver: bridge
