@@ -1,8 +1,11 @@
 package com.legend.movie_service.controller;
 
+import com.legend.common_util.constant.CommonParam;
 import com.legend.movie_service.dto.request.ShowTimeRequest;
+import com.legend.movie_service.dto.response.PaginationResponse;
 import com.legend.movie_service.dto.response.ShowTimeResponse;
 import com.legend.movie_service.service.ShowTimeService;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -30,6 +34,21 @@ public class ShowTimeController {
   @GetMapping("/{id}")
   public ResponseEntity<ShowTimeResponse> getShowTimeById(@PathVariable Long id) {
     return ResponseEntity.ok(showTimeService.getShowTimeById(id));
+  }
+
+  @GetMapping
+  public ResponseEntity<PaginationResponse<ShowTimeResponse>> getSHowTimes(
+      @RequestParam(defaultValue = CommonParam.PAGE_NUMBER) int pageNumber,
+      @RequestParam(defaultValue = CommonParam.PAGE_SIZE) int pageSize,
+      @RequestParam(defaultValue = CommonParam.ID, required = false) String sortBy,
+      @RequestParam(defaultValue = CommonParam.SORT_DIRECTION_DESC, required = false)
+          String sortDirection,
+      @RequestParam(required = false) String cinema,
+      @RequestParam(required = false) LocalDateTime dateTime,
+      @RequestParam(required = false) String movieTitle) {
+    return ResponseEntity.ok(
+        showTimeService.getShowTimesWithFilters(
+            pageNumber, pageSize, sortBy, sortDirection, cinema, dateTime, movieTitle));
   }
 
   @DeleteMapping("/{id}")

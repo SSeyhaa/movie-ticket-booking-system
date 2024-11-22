@@ -15,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.FieldNameConstants;
 
 @Entity
 @Table(name = "movies")
@@ -22,6 +23,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
+@FieldNameConstants
 public class Movie {
 
   @Id

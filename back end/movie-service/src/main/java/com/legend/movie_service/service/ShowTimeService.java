@@ -1,13 +1,24 @@
 package com.legend.movie_service.service;
 
+import com.legend.common_util.util.DateTimeUtil;
 import com.legend.movie_service.dto.request.ShowTimeRequest;
+import com.legend.movie_service.dto.response.PaginationResponse;
 import com.legend.movie_service.dto.response.ShowTimeResponse;
 import com.legend.movie_service.entity.Movie;
 import com.legend.movie_service.entity.ShowTime;
 import com.legend.movie_service.exception.ResourceNotFoundException;
 import com.legend.movie_service.repository.ShowTimeRepository;
+import com.legend.movie_service.repository.specification.ShowTimeSpecification;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -47,5 +58,54 @@ public class ShowTimeService {
     showTime.setMovie(movie);
     ShowTime updatedShowTime = showTimeRepository.save(showTime);
     return modelMapper.map(updatedShowTime, ShowTimeResponse.class);
+  }
+
+  public PaginationResponse<ShowTimeResponse> getShowTimesWithFilters(
+      int pageNumber,
+      int pageSize,
+      String sortBy,
+      String sortDirection,
+      String cinema,
+      LocalDateTime dateTime,
+      String title) {
+
+    Pageable pageable =
+        PageRequest.of(
+            pageNumber, pageSize, Sort.by(Sort.Direction.fromString(sortDirection), sortBy));
+
+    Specification<ShowTime> specification = Specification.allOf();
+    if (Objects.nonNull(cinema)) {
+      specification = specification.and(ShowTimeSpecification.hasCinema(cinema));
+    }
+
+    if (Objects.nonNull(dateTime)) {
+      if (DateTimeUtil.isDateExcludeTime(dateTime)) {
+        specification = specification.and(ShowTimeSpecification.hasDate(dateTime.toLocalDate()));
+      } else if (DateTimeUtil.isDateIncludeTime(dateTime)) {
+        specification = specification.and(ShowTimeSpecification.hasDateTime(dateTime));
+      }
+    }
+
+    if (Objects.nonNull(title)) {
+      specification = specification.and(ShowTimeSpecification.hasMovieTile(title));
+    }
+
+    Page<ShowTime> pageShowTime = showTimeRepository.findAll(specification, pageable);
+    return PaginationResponse.<ShowTimeResponse>builder()
+        .pageNumber(pageNumber)
+        .pageSize(pageSize)
+        .totalElements(pageShowTime.getTotalElements())
+        .totalPages(pageShowTime.getTotalPages())
+        .isFirst(pageShowTime.isFirst())
+        .isLast(pageShowTime.isLast())
+        .isEmpty(pageShowTime.isEmpty())
+        .content(mapToShowTimeResponses(pageShowTime.getContent()))
+        .build();
+  }
+
+  private List<ShowTimeResponse> mapToShowTimeResponses(List<ShowTime> showTimes) {
+    return showTimes.stream()
+        .map(showTime -> modelMapper.map(showTime, ShowTimeResponse.class))
+        .toList();
   }
 }
