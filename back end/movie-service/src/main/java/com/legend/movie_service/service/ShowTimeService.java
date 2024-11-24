@@ -71,7 +71,7 @@ public class ShowTimeService {
 
     Pageable pageable =
         PageRequest.of(
-            pageNumber, pageSize, Sort.by(Sort.Direction.fromString(sortDirection), sortBy));
+            pageNumber - 1, pageSize, Sort.by(Sort.Direction.fromString(sortDirection), sortBy));
 
     Specification<ShowTime> specification = Specification.allOf();
     if (Objects.nonNull(cinema)) {

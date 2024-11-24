@@ -38,8 +38,8 @@ public class ShowTimeController {
 
   @GetMapping
   public ResponseEntity<PaginationResponse<ShowTimeResponse>> getSHowTimes(
-      @RequestParam(defaultValue = CommonParam.PAGE_NUMBER) int pageNumber,
-      @RequestParam(defaultValue = CommonParam.PAGE_SIZE) int pageSize,
+      @RequestParam(defaultValue = CommonParam.ONE, required = false) int pageNumber,
+      @RequestParam(defaultValue = CommonParam.TEN, required = false) int pageSize,
       @RequestParam(defaultValue = CommonParam.ID, required = false) String sortBy,
       @RequestParam(defaultValue = CommonParam.SORT_DIRECTION_DESC, required = false)
           String sortDirection,
