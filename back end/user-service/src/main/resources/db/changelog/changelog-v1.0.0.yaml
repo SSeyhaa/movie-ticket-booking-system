@@ -1,0 +1,67 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 1
+      author: SENG Seyha
+      changes:
+        - sql: # Create the ENUM type for Role
+            sql: "CREATE TYPE role_type AS ENUM ('SUPER_ADMIN', 'USER');"
+
+  - changeSet:
+      id: 2
+      author: SENG Seyha
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: keycloak_id
+                  type: varchar(255)
+              - column:
+                  name: role
+                  type: role_type
+              - column:
+                  name: profile_image_path
+                  type: varchar(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: username
+                  type: varchar(20)
+              - column:
+                  name: email
+                  type: varchar(50)
+                  constraints:
+                    unique: true
+              - column:
+                  name: first_name
+                  type: varchar(50)
+              - column:
+                  name: last_name
+                  type: varchar(50)
+              - column:
+                  name: phone_number
+                  type: varchar(50)
+                  constraints:
+                    unique: true
+              - column:
+                  name: address
+                  type: varchar(100)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: city
+                  type: varchar(30)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: is_active
+                  type: boolean
+                  defaultValueBoolean: false
+
