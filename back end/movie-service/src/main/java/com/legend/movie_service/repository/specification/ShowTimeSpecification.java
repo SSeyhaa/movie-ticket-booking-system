@@ -8,22 +8,23 @@ import jakarta.persistence.criteria.Root;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ShowTimeSpecification {
 
   public static Specification<ShowTime> hasMovieTile(String title) {
-    return (Root<ShowTime> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
-      return cb.like(
-          cb.lower(root.get(ShowTime.Fields.movie).get(Movie.Fields.title)),
-          "%" + title.toLowerCase() + "%");
-    };
+    return (Root<ShowTime> root, CriteriaQuery<?> query, CriteriaBuilder cb) ->
+        cb.like(
+            cb.lower(root.get(ShowTime.Fields.movie).get(Movie.Fields.title)),
+            "%" + title.toLowerCase() + "%");
   }
 
   public static Specification<ShowTime> hasCinema(String cinema) {
-    return (Root<ShowTime> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
-      return cb.like(cb.lower(root.get(ShowTime.Fields.cinema)), "%" + cinema.toLowerCase() + "%");
-    };
+    return (Root<ShowTime> root, CriteriaQuery<?> query, CriteriaBuilder cb) ->
+        cb.like(cb.lower(root.get(ShowTime.Fields.cinema)), "%" + cinema.toLowerCase() + "%");
   }
 
   public static Specification<ShowTime> hasDate(LocalDate dateTime) {

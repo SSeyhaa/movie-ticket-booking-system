@@ -484,25 +484,6 @@
   "webAuthnPolicyPasswordlessExtraOrigins": [],
   "users": [
     {
-      "username": "${KEYCLOAK_USERNAME_SUPER_ADMIN}",
-      "enabled": true,
-      "emailVerified": true,
-      "firstName": "${KEYCLOAK_FIRST_NAME_SUPER_ADMIN}",
-      "lastName": "${KEYCLOAK_LAST_NAME_SUPER_ADMIN}",
-      "email": "${KEYCLOAK_EMAIL_SUPER_ADMIN}",
-      "credentials": [
-        {
-          "type": "password",
-          "value": "${KEYCLOAK_PASSWORD_SUPER_ADMIN}",
-          "temporary": false
-        }
-      ],
-      "realmRoles": [
-        "${KEYCLOAK_ROLE_SUPER_ADMIN}"
-      ]
-    },
-
-    {
       "id": "fd4fb4b1-2bb2-40e1-bdba-655c77971c94",
       "username": "service-account-user-service",
       "emailVerified": false,
