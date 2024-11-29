@@ -23,9 +23,9 @@ databaseChangeLog:
               - column:
                   name: keycloak_id
                   type: varchar(255)
-              - column:
-                  name: role
-                  type: role_type
+                  constraints:
+                    unique: true
+                    nullable: false
               - column:
                   name: profile_image_path
                   type: varchar(255)
@@ -34,17 +34,24 @@ databaseChangeLog:
               - column:
                   name: username
                   type: varchar(20)
+                  constraints:
+                    nullable: false
               - column:
                   name: email
                   type: varchar(50)
                   constraints:
                     unique: true
+                    nullable: false
               - column:
                   name: first_name
                   type: varchar(50)
+                  constraints:
+                    nullable: false
               - column:
                   name: last_name
                   type: varchar(50)
+                  constraints:
+                    nullable: false
               - column:
                   name: phone_number
                   type: varchar(50)
@@ -64,4 +71,64 @@ databaseChangeLog:
                   name: is_active
                   type: boolean
                   defaultValueBoolean: false
+
+  - changeSet:
+      id: 3
+      author: SENG Seyha
+      changes:
+        - createTable:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: user_role
+                  type: role_type
+
+  - changeSet:
+      id: 4
+      author: SENG Seyha
+      changes:
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: user_role
+                  value: 'SUPER_ADMIN'
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: user_role
+                  value: 'USER'
+
+  - changeSet:
+      id: 5
+      author: SENG Seyha
+      changes:
+        - createTable:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: fk_user_id
+                    references: users(id)
+              - column:
+                  name: roles_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: fk_roles_id
+                    references: roles(id)
 

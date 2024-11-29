@@ -2,12 +2,15 @@ package com.legend.user_service.service;
 
 import com.legend.user_service.dto.request.UserRequest;
 import com.legend.user_service.dto.response.UserResponse;
+import com.legend.user_service.entity.Role;
 import com.legend.user_service.entity.User;
 import com.legend.user_service.exception.ResourceNotFoundException;
 import com.legend.user_service.exception.UserAlreadyExistsException;
 import com.legend.user_service.exception.UserCreationException;
+import com.legend.user_service.repository.RoleRepository;
 import com.legend.user_service.repository.UserRepository;
 import java.util.Optional;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -22,6 +25,7 @@ public class UserService {
   private final ModelMapper modelMapper;
   private final UserRepository userRepository;
   private final KeycloakService keycloakService;
+  private final RoleRepository roleRepository;
 
   public UserResponse create(UserRequest userRequest) {
 
@@ -38,6 +42,8 @@ public class UserService {
 
       userRequest.setKeycloakId(userRepresentation.getId());
       User user = modelMapper.map(userRequest, User.class);
+      Set<Role> roles = roleRepository.findByUserRoleIn(userRequest.getUserRoles());
+      user.setRoles(roles);
       userCreated = userRepository.save(user);
       log.info(
           "----- User with email {} created successfully in database server",

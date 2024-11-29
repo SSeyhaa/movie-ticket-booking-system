@@ -1,6 +1,6 @@
 package com.legend.user_service.dto.request;
 
-import com.legend.user_service.constant.Role;
+import com.legend.user_service.constant.UserRole;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,7 +20,7 @@ public class UserRequest {
   private String username;
   private String email;
   private String password;
-  private Set<Role> roles;
+  private Set<UserRole> userRoles;
   private String firstName;
   private String lastName;
   private String phoneNumber;

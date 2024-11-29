@@ -1,6 +1,6 @@
 package com.legend.user_service.dto.response;
 
-import com.legend.user_service.constant.Role;
+import com.legend.user_service.constant.UserRole;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,6 +18,7 @@ public class UserResponse {
   private Long id;
 
   private String keycloakId;
+  private Set<UserRole> roles;
   private String profileImagePath;
   private String username;
   private String email;
