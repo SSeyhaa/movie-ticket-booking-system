@@ -1,6 +1,7 @@
 package com.legend.user_service.start_up;
 
 import com.legend.user_service.config.KeycloakProperty;
+import com.legend.user_service.constant.ProfileConstant;
 import com.legend.user_service.constant.UserRole;
 import com.legend.user_service.exception.RoleAssignmentException;
 import lombok.RequiredArgsConstructor;
@@ -11,9 +12,11 @@ import org.keycloak.admin.client.resource.RolesResource;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 
+@Profile(ProfileConstant.NOT_TEST)
 @Configuration
 @RequiredArgsConstructor
 @Slf4j

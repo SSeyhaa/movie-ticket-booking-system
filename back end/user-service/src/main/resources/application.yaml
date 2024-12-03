@@ -16,6 +16,8 @@ logging:
     com.legend: DEBUG
 
 spring:
+  profiles:
+    active: dev
   application:
     name: ${USER_SERVICE_NAME}
 
@@ -45,6 +47,7 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:db/changelog/db.changelog-master.yaml
+    contexts: '!test'
 
 
 

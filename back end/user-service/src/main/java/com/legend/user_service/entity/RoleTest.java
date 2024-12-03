@@ -13,24 +13,21 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.JdbcType;
-import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import org.springframework.context.annotation.Profile;
 
-@Profile(ProfileConstant.NOT_TEST)
+@Profile(ProfileConstant.TEST)
 @Entity
 @Table(name = "roles")
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
-public class Role {
+public class RoleTest {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @Enumerated(EnumType.STRING)
-  @JdbcType(PostgreSQLEnumJdbcType.class)
   private UserRole userRole;
 }
