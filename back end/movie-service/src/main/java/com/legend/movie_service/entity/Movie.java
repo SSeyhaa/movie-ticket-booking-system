@@ -8,7 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -33,7 +33,7 @@ public class Movie {
   private String title;
   private String posterPath;
   private String description;
-  private LocalDateTime releasedDate;
+  private ZonedDateTime releasedDate;
   private int durationMin;
   private String genre;
 

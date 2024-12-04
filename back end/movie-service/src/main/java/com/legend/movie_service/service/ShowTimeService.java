@@ -10,6 +10,7 @@ import com.legend.movie_service.exception.ResourceNotFoundException;
 import com.legend.movie_service.repository.ShowTimeRepository;
 import com.legend.movie_service.repository.specification.ShowTimeSpecification;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -66,7 +67,7 @@ public class ShowTimeService {
       String sortBy,
       String sortDirection,
       String cinema,
-      LocalDateTime dateTime,
+      ZonedDateTime dateTime,
       String title) {
 
     Pageable pageable =
@@ -78,11 +79,13 @@ public class ShowTimeService {
       specification = specification.and(ShowTimeSpecification.hasCinema(cinema));
     }
 
-    if (Objects.nonNull(dateTime)) {
-      if (DateTimeUtil.isDateExcludeTime(dateTime)) {
-        specification = specification.and(ShowTimeSpecification.hasDate(dateTime.toLocalDate()));
-      } else if (DateTimeUtil.isDateIncludeTime(dateTime)) {
-        specification = specification.and(ShowTimeSpecification.hasDateTime(dateTime));
+    LocalDateTime dateTimeLocal = dateTime.toLocalDateTime();
+
+    if (Objects.nonNull(dateTimeLocal)) {
+      if (DateTimeUtil.isDateExcludeTime(dateTimeLocal)) {
+        specification = specification.and(ShowTimeSpecification.hasDate(dateTimeLocal.toLocalDate()));
+      } else if (DateTimeUtil.isDateIncludeTime(dateTimeLocal)) {
+        specification = specification.and(ShowTimeSpecification.hasDateTime(dateTimeLocal));
       }
     }
 

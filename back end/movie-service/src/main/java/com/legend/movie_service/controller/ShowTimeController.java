@@ -5,7 +5,7 @@ import com.legend.movie_service.dto.request.ShowTimeRequest;
 import com.legend.movie_service.dto.response.PaginationResponse;
 import com.legend.movie_service.dto.response.ShowTimeResponse;
 import com.legend.movie_service.service.ShowTimeService;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -44,7 +44,7 @@ public class ShowTimeController {
       @RequestParam(defaultValue = CommonParam.SORT_DIRECTION_DESC, required = false)
           String sortDirection,
       @RequestParam(required = false) String cinema,
-      @RequestParam(required = false) LocalDateTime dateTime,
+      @RequestParam(required = false) ZonedDateTime dateTime,
       @RequestParam(required = false) String movieTitle) {
     return ResponseEntity.ok(
         showTimeService.getShowTimesWithFilters(

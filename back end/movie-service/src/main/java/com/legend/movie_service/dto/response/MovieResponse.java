@@ -1,6 +1,6 @@
 package com.legend.movie_service.dto.response;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +16,7 @@ public class MovieResponse {
   private String title;
   private String posterPath;
   private String description;
-  private LocalDateTime releasedDate;
+  private ZonedDateTime releasedDate;
   private int durationMin;
   private String genre;
   private String cast;
