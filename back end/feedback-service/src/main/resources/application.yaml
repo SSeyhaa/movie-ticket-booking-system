@@ -10,6 +10,22 @@ eureka:
   instance:
     preferIpAddress: true
 
+
+logging:
+  level:
+    root: info # default logger that applies to all packages in the application
+    org.springframework: debug
+  file:
+    name: ./${spring.application.name}/logs/app.log
+  logback:
+    rollingpolicy:
+      file-name-pattern: app_%d{dd-MM-yyyy}_%i.log
+      max-file-size: 10MB # Maximum size for each log file (e.g., 10MB). A new file is created when reached
+      total-size-cap: 1GB # Total size limit for all log files (e.g., 1GB), the Older files are deleted if exceeded
+      max-history: 7 # Maximum number of log files to keep (e.g., 7 days), the Older files were deleted to maintain this limit.
+#      clean-history-on-start: true # Clean up the history log files on application start
+
+
 spring:
   application:
     name: ${FEEDBACK_SERVICE_NAME}
