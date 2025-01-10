@@ -11,6 +11,16 @@ import org.springframework.web.context.request.WebRequest;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+  @ExceptionHandler(AccessDeniedException.class)
+  public ResponseEntity<ErrorResponse> handleAccessDeniedException(
+      AccessDeniedException e, WebRequest request) {
+
+    ErrorResponse errorResponse =
+        buildErrorResponse(HttpStatus.FORBIDDEN, e.getMessage(), request.getDescription(false));
+
+    return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+  }
+
   @ExceptionHandler(ResourceNotFoundException.class)
   public ResponseEntity<ErrorResponse> handleResourceNotFoundException(
       ResourceNotFoundException e, WebRequest request) {
