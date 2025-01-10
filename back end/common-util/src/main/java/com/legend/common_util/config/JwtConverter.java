@@ -1,4 +1,4 @@
-package com.legend.user_service.config;
+package com.legend.common_util.config;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -13,7 +13,6 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -23,12 +22,23 @@ public class JwtConverter implements Converter<Jwt, AbstractAuthenticationToken>
   private static final String REALM_ACCESS = "realm_access";
   private static final String ROLES = "roles";
   private static final String ROLE_PREFIX = "ROLE_";
-  private static final String PREFERRED_USERNAME = "preferred_username";
+  private static final String SUB_CLAIM = "sub";
+  private static final String EMAIL_CLAIM = "email";
+  private static final String NAME_CLAIM = "name";
+  private static final String GIVEN_NAME_CLAIM = "given_name";
+  private static final String FAMILY_NAME_CLAIM = "family_name";
 
   @Override
   public AbstractAuthenticationToken convert(@NonNull Jwt jwt) {
     Collection<GrantedAuthority> authorities = extractRealmRoles(jwt);
-    return new JwtAuthenticationToken(jwt, authorities, jwt.getClaim(PREFERRED_USERNAME));
+    return new CustomJwtAuthenticationToken(
+        jwt,
+        authorities,
+        jwt.getClaim(SUB_CLAIM),
+        jwt.getClaim(EMAIL_CLAIM),
+        jwt.getClaim(NAME_CLAIM),
+        jwt.getClaim(GIVEN_NAME_CLAIM),
+        jwt.getClaim(FAMILY_NAME_CLAIM));
   }
 
   public Collection<GrantedAuthority> extractRealmRoles(@NonNull Jwt jwt) {
