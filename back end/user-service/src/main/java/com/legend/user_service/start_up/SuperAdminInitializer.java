@@ -1,8 +1,8 @@
 package com.legend.user_service.start_up;
 
+import com.legend.common_util.constant.SystemRole;
 import com.legend.user_service.config.KeycloakProperty;
 import com.legend.user_service.constant.ProfileConstant;
-import com.legend.user_service.constant.UserRole;
 import com.legend.user_service.dto.request.UserRequest;
 import com.legend.user_service.service.UserService;
 import java.util.Set;
@@ -39,7 +39,7 @@ public class SuperAdminInitializer {
         .firstName(keycloakProperty.getFirstNameSuperAdmin())
         .lastName(keycloakProperty.getLastNameSuperAdmin())
         .password(keycloakProperty.getPasswordSuperAdmin())
-        .userRoles(Set.of(UserRole.SUPER_ADMIN))
+        .roles(Set.of(SystemRole.SUPER_ADMIN))
         .isActive(true)
         .build();
   }

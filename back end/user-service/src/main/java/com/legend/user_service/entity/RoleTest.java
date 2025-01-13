@@ -1,7 +1,6 @@
 package com.legend.user_service.entity;
 
 import com.legend.user_service.constant.ProfileConstant;
-import com.legend.user_service.constant.UserRole;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -17,7 +16,7 @@ import org.springframework.context.annotation.Profile;
 
 @Profile(ProfileConstant.TEST)
 @Entity
-@Table(name = "roles")
+@Table(name = "system_roles")
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
@@ -29,5 +28,5 @@ public class RoleTest {
   private Long id;
 
   @Enumerated(EnumType.STRING)
-  private UserRole userRole;
+  private com.legend.common_util.constant.SystemRole role;
 }

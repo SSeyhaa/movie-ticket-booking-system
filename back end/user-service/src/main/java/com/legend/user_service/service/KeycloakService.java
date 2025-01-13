@@ -1,7 +1,7 @@
 package com.legend.user_service.service;
 
+import com.legend.common_util.constant.SystemRole;
 import com.legend.user_service.config.KeycloakProperty;
-import com.legend.user_service.constant.UserRole;
 import com.legend.user_service.dto.request.UserRequest;
 import com.legend.user_service.exception.RoleAssignmentException;
 import com.legend.user_service.exception.UserAlreadyExistsException;
@@ -54,7 +54,7 @@ public class KeycloakService {
 
         String userId = CreatedResponseUtil.getCreatedId(response);
         UserResource userResource = usersResource.get(userId);
-        assignRolesToUser(realmResource, userResource, userRequest.getUserRoles());
+        assignRolesToUser(realmResource, userResource, userRequest.getRoles());
 
         log.info(
             "----- User with email {} created successfully in Keycloak server",
@@ -88,7 +88,7 @@ public class KeycloakService {
   }
 
   private void assignRolesToUser(
-      RealmResource realmResource, UserResource userResource, Set<UserRole> userRoles) {
+      RealmResource realmResource, UserResource userResource, Set<SystemRole> userRoles) {
     RolesResource rolesResource = realmResource.roles();
     List<RoleRepresentation> rolesRepresentation = new ArrayList<>();
 

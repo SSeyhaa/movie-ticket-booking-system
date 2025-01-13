@@ -32,7 +32,7 @@ public class User extends Auditable {
   @ManyToMany(
       fetch = FetchType.EAGER,
       cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
-  private Set<Role> roles;
+  private Set<SystemRole> systemRoles;
 
   private String profileImagePath;
   private String username;

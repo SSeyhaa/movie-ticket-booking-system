@@ -1,7 +1,6 @@
 package com.legend.user_service.entity;
 
 import com.legend.user_service.constant.ProfileConstant;
-import com.legend.user_service.constant.UserRole;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -19,12 +18,12 @@ import org.springframework.context.annotation.Profile;
 
 @Profile(ProfileConstant.NOT_TEST)
 @Entity
-@Table(name = "roles")
+@Table(name = "system_roles")
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
-public class Role {
+public class SystemRole {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,5 +31,5 @@ public class Role {
 
   @Enumerated(EnumType.STRING)
   @JdbcType(PostgreSQLEnumJdbcType.class)
-  private UserRole userRole;
+  private com.legend.common_util.constant.SystemRole role;
 }

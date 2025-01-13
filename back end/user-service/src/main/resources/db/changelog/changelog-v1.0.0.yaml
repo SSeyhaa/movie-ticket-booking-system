@@ -6,7 +6,7 @@ databaseChangeLog:
       author: SENG Seyha
       changes:
         - sql: # Create the ENUM type for Role
-            sql: "CREATE TYPE role_type AS ENUM ('SUPER_ADMIN', 'USER');"
+            sql: "CREATE TYPE system_role_type AS ENUM ('SUPER_ADMIN', 'USER');"
 
 
   - changeSet:
@@ -15,7 +15,7 @@ databaseChangeLog:
       author: SENG Seyha
       changes:
         - sql:
-            sql: "CREATE TYPE IF NOT EXISTS role_type AS VARCHAR(20) CHECK (VALUE IN ('SUPER_ADMIN', 'USER'));"
+            sql: "CREATE TYPE IF NOT EXISTS system_role_type AS VARCHAR(20) CHECK (VALUE IN ('SUPER_ADMIN', 'USER'));"
 
 
   - changeSet:
@@ -90,7 +90,7 @@ databaseChangeLog:
       author: SENG Seyha
       changes:
         - createTable:
-            tableName: roles
+            tableName: system_roles
             columns:
               - column:
                   name: id
@@ -99,8 +99,8 @@ databaseChangeLog:
                   constraints:
                     primaryKey: true
               - column:
-                  name: user_role
-                  type: role_type
+                  name: role
+                  type: system_role_type
 
 
   - changeSet:
@@ -109,7 +109,7 @@ databaseChangeLog:
       author: SENG Seyha
       changes:
         - createTable:
-            tableName: roles
+            tableName: system_roles
             columns:
               - column:
                   name: id
@@ -118,10 +118,10 @@ databaseChangeLog:
                   constraints:
                     primaryKey: true
               - column:
-                  name: user_role
+                  name: role
                   type: varchar(20)
                   constraints:
-                    checkConstraint: "user_role IN ('SUPER_ADMIN', 'USER')"
+                    checkConstraint: "role IN ('SUPER_ADMIN', 'USER')"
 
 
   - changeSet:
@@ -129,16 +129,16 @@ databaseChangeLog:
       author: SENG Seyha
       changes:
         - insert:
-            tableName: roles
+            tableName: system_roles
             columns:
               - column:
-                  name: user_role
+                  name: role
                   value: 'SUPER_ADMIN'
         - insert:
-            tableName: roles
+            tableName: system_roles
             columns:
               - column:
-                  name: user_role
+                  name: role
                   value: 'USER'
 
 
@@ -147,7 +147,7 @@ databaseChangeLog:
       author: SENG Seyha
       changes:
         - createTable:
-            tableName: users_roles
+            tableName: users_system_roles
             columns:
               - column:
                   name: id
@@ -162,9 +162,9 @@ databaseChangeLog:
                     foreignKeyName: fk_user_id
                     references: users(id)
               - column:
-                  name: roles_id
+                  name: system_roles_id
                   type: bigint
                   constraints:
-                    foreignKeyName: fk_roles_id
-                    references: roles(id)
+                    foreignKeyName: fk_system_roles_id
+                    references: system_roles(id)
 

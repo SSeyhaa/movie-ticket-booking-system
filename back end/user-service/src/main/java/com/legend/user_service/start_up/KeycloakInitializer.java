@@ -1,8 +1,8 @@
 package com.legend.user_service.start_up;
 
+import com.legend.common_util.constant.SystemRole;
 import com.legend.user_service.config.KeycloakProperty;
 import com.legend.user_service.constant.ProfileConstant;
-import com.legend.user_service.constant.UserRole;
 import com.legend.user_service.exception.RoleAssignmentException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ public class KeycloakInitializer {
       RealmResource realmResource = keycloak.realm(keycloakProperty.getRealm());
       RolesResource rolesResource = realmResource.roles();
 
-      for (String role : UserRole.getRoles()) {
+      for (String role : SystemRole.getRoles()) {
         if (!roleExists(rolesResource, role)) {
           createRoleKeycloakRealm(rolesResource, role);
         }

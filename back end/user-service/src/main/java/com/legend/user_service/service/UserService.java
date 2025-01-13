@@ -2,7 +2,7 @@ package com.legend.user_service.service;
 
 import com.legend.user_service.dto.request.UserRequest;
 import com.legend.user_service.dto.response.UserResponse;
-import com.legend.user_service.entity.Role;
+import com.legend.user_service.entity.SystemRole;
 import com.legend.user_service.entity.User;
 import com.legend.user_service.exception.ResourceNotFoundException;
 import com.legend.user_service.exception.UserAlreadyExistsException;
@@ -42,8 +42,8 @@ public class UserService {
 
       userRequest.setKeycloakId(userRepresentation.getId());
       User user = modelMapper.map(userRequest, User.class);
-      Set<Role> roles = roleRepository.findByUserRoleIn(userRequest.getUserRoles());
-      user.setRoles(roles);
+      Set<SystemRole> systemRoles = roleRepository.findByRoleIn(userRequest.getRoles());
+      user.setSystemRoles(systemRoles);
       userCreated = userRepository.save(user);
       log.info(
           "----- User with email {} created successfully in database server",
