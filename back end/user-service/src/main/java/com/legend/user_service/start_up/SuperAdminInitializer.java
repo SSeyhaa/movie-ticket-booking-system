@@ -2,29 +2,28 @@ package com.legend.user_service.start_up;
 
 import com.legend.common_util.constant.SystemRole;
 import com.legend.user_service.config.KeycloakProperty;
-import com.legend.user_service.constant.ProfileConstant;
 import com.legend.user_service.dto.request.UserRequest;
 import com.legend.user_service.service.UserService;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.context.event.EventListener;
-import org.springframework.core.annotation.Order;
+import org.springframework.core.Ordered;
 
-@Profile(ProfileConstant.NOT_TEST)
 @Configuration
 @RequiredArgsConstructor
 @Slf4j
-public class SuperAdminInitializer {
+public class SuperAdminInitializer implements Task, Ordered {
   private final KeycloakProperty keycloakProperty;
   private final UserService userService;
 
-  @EventListener(ApplicationReadyEvent.class)
-  @Order(2)
-  public void initialize() {
+  @Override
+  public int getOrder() {
+    return 1;
+  }
+
+  @Override
+  public void run() {
     try {
       userService.create(buildSuperAdminProperty());
     } catch (Exception e) {

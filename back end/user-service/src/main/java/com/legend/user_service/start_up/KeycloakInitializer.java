@@ -2,7 +2,6 @@ package com.legend.user_service.start_up;
 
 import com.legend.common_util.constant.SystemRole;
 import com.legend.user_service.config.KeycloakProperty;
-import com.legend.user_service.constant.ProfileConstant;
 import com.legend.user_service.exception.RoleAssignmentException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,23 +9,23 @@ import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.RolesResource;
 import org.keycloak.representations.idm.RoleRepresentation;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.context.event.EventListener;
-import org.springframework.core.annotation.Order;
+import org.springframework.core.Ordered;
 
-@Profile(ProfileConstant.NOT_TEST)
 @Configuration
 @RequiredArgsConstructor
 @Slf4j
-public class KeycloakInitializer {
+public class KeycloakInitializer implements Task, Ordered {
   private final KeycloakProperty keycloakProperty;
   private final Keycloak keycloak;
 
-  @EventListener(ApplicationReadyEvent.class)
-  @Order(1)
-  public void initializeRolesToKeycloakRealm() {
+  @Override
+  public int getOrder() {
+    return 0;
+  }
+
+  @Override
+  public void run() {
     try {
       RealmResource realmResource = keycloak.realm(keycloakProperty.getRealm());
       RolesResource rolesResource = realmResource.roles();
