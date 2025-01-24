@@ -1,5 +1,6 @@
 package com.legend.user_service.config;
 
+import com.legend.common_util.config.CustomAuthenticationEntryPoint;
 import com.legend.common_util.config.JwtConverter;
 import com.legend.common_util.constant.PublicEndpoint;
 import lombok.RequiredArgsConstructor;
