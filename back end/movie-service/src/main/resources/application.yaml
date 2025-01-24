@@ -26,6 +26,15 @@ logging:
 #      clean-history-on-start: true # Clean up the history log files on application start
 
 
+springdoc:
+  swagger-ui:
+    persistAuthorization: true
+    with-credentials: true
+    oauth:
+      client-id: ${MOVIE_SERVICE_KEYCLOAK_CLIENT_ID}
+      client-secret: ${MOVIE_SERVICE_KEYCLOAK_CLIENT_SECRET}
+
+
 spring:
   application:
     name: ${MOVIE_SERVICE_NAME}
@@ -61,3 +70,17 @@ spring:
       hibernate:
         format_sql: true
 
+
+
+app:
+  keycloak:
+    server-url: ${KEYCLOAK_URL}
+    realm: ${KEYCLOAK_REALM}
+    client-id: ${MOVIE_SERVICE_KEYCLOAK_CLIENT_ID}
+    client-secret: ${MOVIE_SERVICE_KEYCLOAK_CLIENT_SECRET:ZhkWRhYC4JpmRVHIObMnFPxPWUVajkGR}
+    token-url: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/token
+    email-super-admin: ${KEYCLOAK_EMAIL_SUPER_ADMIN}
+    username-super-admin: ${KEYCLOAK_USERNAME_SUPER_ADMIN}
+    password-super-admin: ${KEYCLOAK_PASSWORD_SUPER_ADMIN}
+    first-name-super-admin: ${KEYCLOAK_FIRST_NAME_SUPER_ADMIN}
+    last-name-super-admin: ${KEYCLOAK_LAST_NAME_SUPER_ADMIN}
