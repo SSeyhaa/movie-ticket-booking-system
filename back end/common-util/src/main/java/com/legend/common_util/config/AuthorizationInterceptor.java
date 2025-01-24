@@ -1,8 +1,8 @@
-package com.legend.user_service.config;
+package com.legend.common_util.config;
 
 import com.legend.common_util.annotation.RoleRequired;
 import com.legend.common_util.constant.SystemRole;
-import com.legend.user_service.exception.AccessDeniedException;
+import com.legend.common_util.exception.AccessDeniedException;
 import java.util.Arrays;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;

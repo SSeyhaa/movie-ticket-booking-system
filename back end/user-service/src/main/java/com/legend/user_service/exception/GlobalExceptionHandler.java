@@ -1,6 +1,7 @@
 package com.legend.user_service.exception;
 
-import com.legend.user_service.dto.response.ErrorResponse;
+import com.legend.common_util.exception.AccessDeniedException;
+import com.legend.common_util.dto.response.ErrorResponse;
 import java.time.LocalDateTime;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

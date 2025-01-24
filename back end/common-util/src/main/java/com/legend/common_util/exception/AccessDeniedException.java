@@ -1,4 +1,4 @@
-package com.legend.user_service.exception;
+package com.legend.common_util.exception;
 
 public class AccessDeniedException extends RuntimeException {
 
