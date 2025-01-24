@@ -25,6 +25,15 @@ logging:
 #      clean-history-on-start: true # Clean up the history log files on application start
 
 
+springdoc:
+  swagger-ui:
+    persistAuthorization: true
+    with-credentials: true
+    oauth:
+      client-id: ${USER_SERVICE_KEYCLOAK_CLIENT_ID}
+      client-secret: ${USER_SERVICE_KEYCLOAK_CLIENT_SECRET}
+
+
 spring:
   profiles:
     active: dev
@@ -75,6 +84,7 @@ app:
     realm: ${KEYCLOAK_REALM}
     client-id: ${USER_SERVICE_KEYCLOAK_CLIENT_ID}
     client-secret: ${USER_SERVICE_KEYCLOAK_CLIENT_SECRET:ZhkWRhYC4JpmRVHIObMnFPxPWUVajkGR}
+    token-url: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/token
     email-super-admin: ${KEYCLOAK_EMAIL_SUPER_ADMIN}
     username-super-admin: ${KEYCLOAK_USERNAME_SUPER_ADMIN}
     password-super-admin: ${KEYCLOAK_PASSWORD_SUPER_ADMIN}

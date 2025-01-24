@@ -14,6 +14,7 @@ public class KeycloakProperty {
   private String realm;
   private String clientId;
   private String clientSecret;
+  private String tokenUrl;
   private String usernameSuperAdmin;
   private String passwordSuperAdmin;
   private String emailSuperAdmin;
