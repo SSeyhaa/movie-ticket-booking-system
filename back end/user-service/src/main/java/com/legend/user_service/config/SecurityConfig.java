@@ -19,6 +19,7 @@ public class SecurityConfig {
 
   private final CorsConfigurationSource corsConfigurationSource;
   private final JwtConverter jwtConverter;
+  private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -35,8 +36,9 @@ public class SecurityConfig {
                     .authenticated())
         .oauth2ResourceServer(
             oauth2 ->
-                oauth2.jwt(
-                    jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(jwtConverter)));
+                oauth2
+                    .jwt(jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(jwtConverter))
+                    .authenticationEntryPoint(customAuthenticationEntryPoint));
 
     return http.build();
   }
