@@ -23,9 +23,9 @@ public class TheaterController {
 
   private final TheaterService theaterService;
 
-  @PostMapping("/cinemas/{cinemaId}")
+  @PostMapping
   public ResponseEntity<TheaterDto> addTheater(
-      @PathVariable("cinemaId") Long cinemaId, @RequestBody TheaterDto theaterDto) {
+      @RequestParam("cinemaId") Long cinemaId, @RequestBody TheaterDto theaterDto) {
     return ResponseEntity.ok(theaterService.addTheater(cinemaId, theaterDto));
   }
 

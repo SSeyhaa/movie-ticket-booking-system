@@ -4,8 +4,10 @@ import com.legend.common_util.util.DateTimeUtil;
 import com.legend.movie_service.dto.request.ShowTimeRequest;
 import com.legend.movie_service.dto.response.PaginationResponse;
 import com.legend.movie_service.dto.response.ShowTimeResponse;
+import com.legend.movie_service.entity.Cinema;
 import com.legend.movie_service.entity.Movie;
 import com.legend.movie_service.entity.ShowTime;
+import com.legend.movie_service.entity.Theater;
 import com.legend.movie_service.exception.ResourceNotFoundException;
 import com.legend.movie_service.repository.ShowTimeRepository;
 import com.legend.movie_service.repository.specification.ShowTimeSpecification;
@@ -13,6 +15,7 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -26,19 +29,68 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ShowTimeService {
   private final ModelMapper modelMapper;
+  private final CinemaService cinemaService;
   private final MovieService movieService;
   private final ShowTimeRepository showTimeRepository;
 
-  public ShowTimeResponse createShowTime(Long movieId, ShowTimeRequest showTimeRequest) {
-    Movie movie = movieService.findMovieById(movieId);
-    ShowTime showTime = modelMapper.map(showTimeRequest, ShowTime.class);
+  public ShowTimeResponse createShowTime(ShowTimeRequest showTimeRequest) {
+    Cinema cinema = cinemaService.findCinemaById(showTimeRequest.getCinemaId());
+
+    Theater theater =
+        cinema.getTheaters().stream()
+            .filter(th -> Objects.equals(th.getId(), showTimeRequest.getTheaterId()))
+            .findFirst()
+            .orElseThrow(
+                () ->
+                    new ResourceNotFoundException(
+                        "Theater not found with id: " + showTimeRequest.getTheaterId()));
+
+    Movie movie = movieService.findMovieById(showTimeRequest.getMovieId());
+
+    ShowTime showTime = buildShowTime(cinema, theater, movie, showTimeRequest.getDateTime());
+
+    ShowTime showTimeSaved = showTimeRepository.save(showTime);
+
+    return buildShowTimeResponse(showTimeSaved);
+  }
+
+  private ShowTimeResponse buildShowTimeResponse(ShowTime showTime) {
+    return ShowTimeResponse.builder()
+        .id(showTime.getId())
+        .cinema(showTime.getCinema().getName())
+        .theater(showTime.getTheater().getName())
+        .dateTime(showTime.getDateTime())
+        .movieTitle(showTime.getMovie().getTitle())
+        .build();
+  }
+
+  private List<ShowTimeResponse> buildShowTimesResponse(List<ShowTime> showTimes) {
+    return showTimes.stream()
+        .map(
+            showTime ->
+                ShowTimeResponse.builder()
+                    .id(showTime.getId())
+                    .cinema(showTime.getCinema().getName())
+                    .theater(showTime.getTheater().getName())
+                    .dateTime(showTime.getDateTime())
+                    .movieTitle(showTime.getMovie().getTitle())
+                    .build())
+        .toList();
+  }
+
+  private ShowTime buildShowTime(
+      Cinema cinema, Theater theater, Movie movie, ZonedDateTime dateTime) {
+    ShowTime showTime = new ShowTime();
+    showTime.setCinema(cinema);
+    showTime.setTheater(theater);
     showTime.setMovie(movie);
-    return modelMapper.map(showTimeRepository.save(showTime), ShowTimeResponse.class);
+    showTime.setDateTime(dateTime);
+    return showTime;
   }
 
   public ShowTimeResponse getShowTimeById(Long id) {
     ShowTime showTime = findShowTimeById(id);
-    return modelMapper.map(showTimeRepository.save(showTime), ShowTimeResponse.class);
+    return buildShowTimeResponse(showTime);
   }
 
   public void deleteShowTimeById(Long id) {
@@ -55,10 +107,24 @@ public class ShowTimeService {
   public ShowTimeResponse updateShowTime(Long id, ShowTimeRequest showTimeRequest) {
     Movie movie = movieService.findMovieById(showTimeRequest.getMovieId());
     ShowTime showTime = findShowTimeById(id);
-    modelMapper.map(showTimeRequest, showTime);
+
+    Cinema cinema = cinemaService.findCinemaById(showTimeRequest.getCinemaId());
+
+    Theater theater =
+        cinema.getTheaters().stream()
+            .filter(th -> Objects.equals(th.getId(), showTimeRequest.getTheaterId()))
+            .findFirst()
+            .orElseThrow(
+                () ->
+                    new ResourceNotFoundException(
+                        "Theater not found with id: " + showTimeRequest.getTheaterId()));
+
+    showTime.setCinema(cinema);
+    showTime.setTheater(theater);
     showTime.setMovie(movie);
-    ShowTime updatedShowTime = showTimeRepository.save(showTime);
-    return modelMapper.map(updatedShowTime, ShowTimeResponse.class);
+    showTime.setDateTime(showTimeRequest.getDateTime());
+    ShowTime showTimeUpdated = showTimeRepository.save(showTime);
+    return buildShowTimeResponse(showTimeUpdated);
   }
 
   public PaginationResponse<ShowTimeResponse> getShowTimesWithFilters(
@@ -66,31 +132,37 @@ public class ShowTimeService {
       int pageSize,
       String sortBy,
       String sortDirection,
-      String cinema,
+      Optional<String> cinema,
+      Optional<String> theater,
       ZonedDateTime dateTime,
-      String title) {
+      Optional<String> movieTitle) {
 
     Pageable pageable =
         PageRequest.of(
             pageNumber - 1, pageSize, Sort.by(Sort.Direction.fromString(sortDirection), sortBy));
 
     Specification<ShowTime> specification = Specification.allOf();
-    if (Objects.nonNull(cinema)) {
-      specification = specification.and(ShowTimeSpecification.hasCinema(cinema));
+    if (cinema.isPresent()) {
+      specification = specification.and(ShowTimeSpecification.hasCinema(cinema.get()));
     }
 
-    LocalDateTime dateTimeLocal = dateTime.toLocalDateTime();
+    if (theater.isPresent()) {
+      specification = specification.and(ShowTimeSpecification.hasTheater(theater.get()));
+    }
 
-    if (Objects.nonNull(dateTimeLocal)) {
+    if (Objects.nonNull(dateTime)) {
+      LocalDateTime dateTimeLocal = dateTime.toLocalDateTime();
+
       if (DateTimeUtil.isDateExcludeTime(dateTimeLocal)) {
-        specification = specification.and(ShowTimeSpecification.hasDate(dateTimeLocal.toLocalDate()));
+        specification =
+            specification.and(ShowTimeSpecification.hasDate(dateTimeLocal.toLocalDate()));
       } else if (DateTimeUtil.isDateIncludeTime(dateTimeLocal)) {
         specification = specification.and(ShowTimeSpecification.hasDateTime(dateTimeLocal));
       }
     }
 
-    if (Objects.nonNull(title)) {
-      specification = specification.and(ShowTimeSpecification.hasMovieTile(title));
+    if (movieTitle.isPresent()) {
+      specification = specification.and(ShowTimeSpecification.hasMovieTile(movieTitle.get()));
     }
 
     Page<ShowTime> pageShowTime = showTimeRepository.findAll(specification, pageable);
@@ -102,7 +174,7 @@ public class ShowTimeService {
         .isFirst(pageShowTime.isFirst())
         .isLast(pageShowTime.isLast())
         .isEmpty(pageShowTime.isEmpty())
-        .content(mapToShowTimeResponses(pageShowTime.getContent()))
+        .content(buildShowTimesResponse(pageShowTime.getContent()))
         .build();
   }
 

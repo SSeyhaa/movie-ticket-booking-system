@@ -1,6 +1,5 @@
 package com.legend.movie_service.entity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,10 +26,16 @@ public class ShowTime {
   private Long id;
 
   private ZonedDateTime dateTime;
-  private String cinema;
-  private String theater;
 
-  @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+  @ManyToOne
+  @NotNull(message = "please add the cinema for the show time")
+  private Cinema cinema;
+
+  @ManyToOne
+  @NotNull(message = "please add the theater for the show time")
+  private Theater theater;
+
+  @ManyToOne
   @NotNull(message = "please add the movie for the show time")
   private Movie movie;
 }

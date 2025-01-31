@@ -1,7 +1,9 @@
 package com.legend.movie_service.repository.specification;
 
+import com.legend.movie_service.entity.Cinema;
 import com.legend.movie_service.entity.Movie;
 import com.legend.movie_service.entity.ShowTime;
+import com.legend.movie_service.entity.Theater;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
@@ -24,7 +26,16 @@ public class ShowTimeSpecification {
 
   public static Specification<ShowTime> hasCinema(String cinema) {
     return (Root<ShowTime> root, CriteriaQuery<?> query, CriteriaBuilder cb) ->
-        cb.like(cb.lower(root.get(ShowTime.Fields.cinema)), "%" + cinema.toLowerCase() + "%");
+        cb.like(
+            cb.lower(root.get(ShowTime.Fields.cinema).get(Cinema.Fields.name)),
+            "%" + cinema.toLowerCase() + "%");
+  }
+
+  public static Specification<ShowTime> hasTheater(String theater) {
+    return (Root<ShowTime> root, CriteriaQuery<?> query, CriteriaBuilder cb) ->
+        cb.like(
+            cb.lower(root.get(ShowTime.Fields.theater).get(Theater.Fields.name)),
+            "%" + theater.toLowerCase() + "%");
   }
 
   public static Specification<ShowTime> hasDate(LocalDate dateTime) {

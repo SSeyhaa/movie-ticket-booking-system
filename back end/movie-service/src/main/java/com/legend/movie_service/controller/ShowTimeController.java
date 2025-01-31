@@ -6,7 +6,9 @@ import com.legend.movie_service.dto.response.PaginationResponse;
 import com.legend.movie_service.dto.response.ShowTimeResponse;
 import com.legend.movie_service.service.ShowTimeService;
 import java.time.ZonedDateTime;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,10 +27,10 @@ public class ShowTimeController {
 
   private final ShowTimeService showTimeService;
 
-  @PostMapping("/{movieId}")
+  @PostMapping
   public ResponseEntity<ShowTimeResponse> createShowTime(
-      @PathVariable Long movieId, @RequestBody ShowTimeRequest showTimeRequest) {
-    return ResponseEntity.ok(showTimeService.createShowTime(movieId, showTimeRequest));
+      @RequestBody ShowTimeRequest showTimeRequest) {
+    return ResponseEntity.ok(showTimeService.createShowTime(showTimeRequest));
   }
 
   @GetMapping("/{id}")
@@ -43,12 +45,13 @@ public class ShowTimeController {
       @RequestParam(defaultValue = CommonParam.ID, required = false) String sortBy,
       @RequestParam(defaultValue = CommonParam.SORT_DIRECTION_DESC, required = false)
           String sortDirection,
-      @RequestParam(required = false) String cinema,
-      @RequestParam(required = false) ZonedDateTime dateTime,
-      @RequestParam(required = false) String movieTitle) {
+      @RequestParam Optional<String> cinema,
+      @RequestParam Optional<String> theater,
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateTime,
+      @RequestParam Optional<String> movieTitle) {
     return ResponseEntity.ok(
         showTimeService.getShowTimesWithFilters(
-            pageNumber, pageSize, sortBy, sortDirection, cinema, dateTime, movieTitle));
+            pageNumber, pageSize, sortBy, sortDirection, cinema, theater, dateTime, movieTitle));
   }
 
   @DeleteMapping("/{id}")
