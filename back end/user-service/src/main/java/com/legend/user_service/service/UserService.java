@@ -1,9 +1,9 @@
 package com.legend.user_service.service;
 
-import com.legend.user_service.dto.request.UserRequest;
-import com.legend.user_service.dto.response.UserResponse;
-import com.legend.user_service.entity.SystemRole;
-import com.legend.user_service.entity.User;
+import com.legend.user_service.model.dto.request.UserRequest;
+import com.legend.user_service.model.dto.response.UserResponse;
+import com.legend.user_service.model.entity.SystemRole;
+import com.legend.user_service.model.entity.User;
 import com.legend.user_service.exception.ResourceNotFoundException;
 import com.legend.user_service.exception.UserAlreadyExistsException;
 import com.legend.user_service.exception.UserCreationException;

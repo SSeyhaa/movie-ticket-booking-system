@@ -1,8 +1,8 @@
 package com.legend.movie_service.controller;
 
 import com.legend.common_util.dto.request.PaginationRequest;
-import com.legend.movie_service.dto.CinemaDto;
-import com.legend.movie_service.dto.response.PaginationResponse;
+import com.legend.movie_service.model.dto.CinemaDto;
+import com.legend.movie_service.model.dto.response.PaginationResponse;
 import com.legend.movie_service.service.CinemaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -1,9 +1,9 @@
 package com.legend.movie_service.repository.specification;
 
-import com.legend.movie_service.entity.Cinema;
-import com.legend.movie_service.entity.Movie;
-import com.legend.movie_service.entity.ShowTime;
-import com.legend.movie_service.entity.Theater;
+import com.legend.movie_service.model.entity.Cinema;
+import com.legend.movie_service.model.entity.Movie;
+import com.legend.movie_service.model.entity.ShowTime;
+import com.legend.movie_service.model.entity.Theater;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;

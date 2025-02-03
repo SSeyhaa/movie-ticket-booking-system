@@ -1,7 +1,7 @@
 package com.legend.user_service.controller;
 
-import com.legend.user_service.dto.request.UserRequest;
-import com.legend.user_service.dto.response.UserResponse;
+import com.legend.user_service.model.dto.request.UserRequest;
+import com.legend.user_service.model.dto.response.UserResponse;
 import com.legend.user_service.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

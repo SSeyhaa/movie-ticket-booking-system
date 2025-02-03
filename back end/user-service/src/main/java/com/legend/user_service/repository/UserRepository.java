@@ -1,6 +1,6 @@
 package com.legend.user_service.repository;
 
-import com.legend.user_service.entity.User;
+import com.legend.user_service.model.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, Long> {

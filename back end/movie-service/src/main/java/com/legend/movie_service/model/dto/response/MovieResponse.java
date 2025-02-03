@@ -1,4 +1,4 @@
-package com.legend.movie_service.dto.response;
+package com.legend.movie_service.model.dto.response;
 
 import java.time.ZonedDateTime;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package com.legend.movie_service.entity;
+package com.legend.movie_service.model.entity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

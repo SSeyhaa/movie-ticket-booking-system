@@ -1,4 +1,4 @@
-package com.legend.movie_service.dto.request;
+package com.legend.movie_service.model.dto.request;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;

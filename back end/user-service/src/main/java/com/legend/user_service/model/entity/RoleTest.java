@@ -1,4 +1,4 @@
-package com.legend.user_service.entity;
+package com.legend.user_service.model.entity;
 
 import com.legend.user_service.constant.ProfileConstant;
 import jakarta.persistence.Entity;
@@ -12,24 +12,21 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.JdbcType;
-import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import org.springframework.context.annotation.Profile;
 
-@Profile(ProfileConstant.NOT_TEST)
+@Profile(ProfileConstant.TEST)
 @Entity
 @Table(name = "system_roles")
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
-public class SystemRole {
+public class RoleTest {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @Enumerated(EnumType.STRING)
-  @JdbcType(PostgreSQLEnumJdbcType.class)
   private com.legend.common_util.constant.SystemRole role;
 }

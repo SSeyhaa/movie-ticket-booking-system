@@ -2,7 +2,7 @@ package com.legend.user_service.start_up;
 
 import com.legend.common_util.constant.SystemRole;
 import com.legend.user_service.config.KeycloakProperty;
-import com.legend.user_service.dto.request.UserRequest;
+import com.legend.user_service.model.dto.request.UserRequest;
 import com.legend.user_service.service.UserService;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;

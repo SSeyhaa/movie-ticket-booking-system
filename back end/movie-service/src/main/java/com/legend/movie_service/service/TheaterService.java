@@ -1,10 +1,10 @@
 package com.legend.movie_service.service;
 
 import com.legend.common_util.dto.request.PaginationRequest;
-import com.legend.movie_service.dto.TheaterDto;
-import com.legend.movie_service.dto.response.PaginationResponse;
-import com.legend.movie_service.entity.Cinema;
-import com.legend.movie_service.entity.Theater;
+import com.legend.movie_service.model.dto.TheaterDto;
+import com.legend.movie_service.model.dto.response.PaginationResponse;
+import com.legend.movie_service.model.entity.Cinema;
+import com.legend.movie_service.model.entity.Theater;
 import com.legend.movie_service.exception.ResourceNotFoundException;
 import com.legend.movie_service.repository.TheaterRepository;
 import java.util.List;

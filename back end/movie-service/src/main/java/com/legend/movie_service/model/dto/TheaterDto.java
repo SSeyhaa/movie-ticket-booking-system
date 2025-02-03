@@ -1,4 +1,4 @@
-package com.legend.movie_service.dto;
+package com.legend.movie_service.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

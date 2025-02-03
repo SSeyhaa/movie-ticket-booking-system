@@ -1,7 +1,7 @@
 package com.legend.movie_service.controller;
 
-import com.legend.movie_service.dto.request.MovieRequest;
-import com.legend.movie_service.dto.response.MovieResponse;
+import com.legend.movie_service.model.dto.request.MovieRequest;
+import com.legend.movie_service.model.dto.response.MovieResponse;
 import com.legend.movie_service.service.MovieService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

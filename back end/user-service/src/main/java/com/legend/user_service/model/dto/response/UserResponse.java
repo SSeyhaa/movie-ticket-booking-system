@@ -1,4 +1,4 @@
-package com.legend.user_service.dto.request;
+package com.legend.user_service.model.dto.response;
 
 import com.legend.common_util.constant.SystemRole;
 import java.util.Set;
@@ -13,14 +13,15 @@ import lombok.Setter;
 @Setter
 @Getter
 @Builder
-public class UserRequest {
+public class UserResponse {
+
+  private Long id;
 
   private String keycloakId;
+  private Set<SystemRole> roles;
   private String profileImagePath;
   private String username;
   private String email;
-  private String password;
-  private Set<SystemRole> roles;
   private String firstName;
   private String lastName;
   private String phoneNumber;

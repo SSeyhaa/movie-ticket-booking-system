@@ -1,6 +1,6 @@
 package com.legend.user_service.repository;
 
-import com.legend.user_service.entity.SystemRole;
+import com.legend.user_service.model.entity.SystemRole;
 import java.util.Set;
 import org.springframework.data.jpa.repository.JpaRepository;
 
