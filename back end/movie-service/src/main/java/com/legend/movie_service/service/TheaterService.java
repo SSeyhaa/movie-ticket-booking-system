@@ -1,5 +1,6 @@
 package com.legend.movie_service.service;
 
+import com.legend.common_util.dto.request.PaginationRequest;
 import com.legend.movie_service.dto.TheaterDto;
 import com.legend.movie_service.dto.response.PaginationResponse;
 import com.legend.movie_service.entity.Cinema;
@@ -53,16 +54,19 @@ public class TheaterService {
     return modelMapper.map(theater, TheaterDto.class);
   }
 
-  public PaginationResponse<TheaterDto> getTheaterWithPage(
-      int pageNumber, int pageSize, String sortDirection, String sortBy) {
+  public PaginationResponse<TheaterDto> getTheaterWithPage(PaginationRequest paginationRequest) {
     Pageable pageable =
         PageRequest.of(
-            pageNumber - 1, pageSize, Sort.by(Sort.Direction.fromString(sortDirection), sortBy));
+            paginationRequest.getPageNumber() - 1,
+            paginationRequest.getPageSize(),
+            Sort.by(
+                Sort.Direction.fromString(paginationRequest.getSortDirection()),
+                paginationRequest.getSortBy()));
 
     Page<Theater> theaterPages = theaterRepository.findAll(pageable);
     return PaginationResponse.<TheaterDto>builder()
-        .pageNumber(pageNumber)
-        .pageSize(pageSize)
+        .pageNumber(paginationRequest.getPageNumber())
+        .pageSize(paginationRequest.getPageSize())
         .totalElements(theaterPages.getTotalElements())
         .totalPages(theaterPages.getTotalPages())
         .isFirst(theaterPages.isFirst())

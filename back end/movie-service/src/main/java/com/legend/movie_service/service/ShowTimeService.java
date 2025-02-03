@@ -1,5 +1,6 @@
 package com.legend.movie_service.service;
 
+import com.legend.common_util.dto.request.PaginationRequest;
 import com.legend.common_util.util.DateTimeUtil;
 import com.legend.movie_service.dto.request.ShowTimeRequest;
 import com.legend.movie_service.dto.response.PaginationResponse;
@@ -28,7 +29,6 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class ShowTimeService {
-  private final ModelMapper modelMapper;
   private final CinemaService cinemaService;
   private final MovieService movieService;
   private final ShowTimeRepository showTimeRepository;
@@ -128,10 +128,7 @@ public class ShowTimeService {
   }
 
   public PaginationResponse<ShowTimeResponse> getShowTimesWithFilters(
-      int pageNumber,
-      int pageSize,
-      String sortBy,
-      String sortDirection,
+      PaginationRequest paginationRequest,
       Optional<String> cinema,
       Optional<String> theater,
       ZonedDateTime dateTime,
@@ -139,7 +136,11 @@ public class ShowTimeService {
 
     Pageable pageable =
         PageRequest.of(
-            pageNumber - 1, pageSize, Sort.by(Sort.Direction.fromString(sortDirection), sortBy));
+            paginationRequest.getPageNumber() - 1,
+            paginationRequest.getPageSize(),
+            Sort.by(
+                Sort.Direction.fromString(paginationRequest.getSortDirection()),
+                paginationRequest.getSortBy()));
 
     Specification<ShowTime> specification = Specification.allOf();
     if (cinema.isPresent()) {
@@ -167,8 +168,8 @@ public class ShowTimeService {
 
     Page<ShowTime> pageShowTime = showTimeRepository.findAll(specification, pageable);
     return PaginationResponse.<ShowTimeResponse>builder()
-        .pageNumber(pageNumber)
-        .pageSize(pageSize)
+        .pageNumber(paginationRequest.getPageNumber())
+        .pageSize(paginationRequest.getPageSize())
         .totalElements(pageShowTime.getTotalElements())
         .totalPages(pageShowTime.getTotalPages())
         .isFirst(pageShowTime.isFirst())
@@ -176,11 +177,5 @@ public class ShowTimeService {
         .isEmpty(pageShowTime.isEmpty())
         .content(buildShowTimesResponse(pageShowTime.getContent()))
         .build();
-  }
-
-  private List<ShowTimeResponse> mapToShowTimeResponses(List<ShowTime> showTimes) {
-    return showTimes.stream()
-        .map(showTime -> modelMapper.map(showTime, ShowTimeResponse.class))
-        .toList();
   }
 }
