@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/theaters")
+@RequestMapping("/v1/theaters")
 @RequiredArgsConstructor
 public class TheaterController {
 
