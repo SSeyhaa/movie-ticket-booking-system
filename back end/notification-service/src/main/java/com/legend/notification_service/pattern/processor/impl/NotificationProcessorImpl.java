@@ -89,7 +89,7 @@ public class StandardNotificationProcessor extends NotificationProcessor {
     log.error(
         "--- [{}]: Error handling notification: {}, error: {}",
         notification.getTemplate(),
-        notification,
+        notification.getRecipient(),
         error.getMessage(),
         error);
   }

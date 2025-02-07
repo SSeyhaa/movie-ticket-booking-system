@@ -32,6 +32,7 @@
 	</scm>
 
 	<properties>
+		<jte-version>3.1.16</jte-version>
 	</properties>
 
 	<dependencies>
@@ -80,6 +81,19 @@
 			<artifactId>h2</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>gg.jte</groupId>
+			<artifactId>jte</artifactId>
+			<version>${jte-version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>gg.jte</groupId>
+			<artifactId>jte-maven-plugin</artifactId>
+			<version>${jte-version}</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -96,6 +110,28 @@
 					</excludes>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>gg.jte</groupId>
+				<artifactId>jte-maven-plugin</artifactId>
+				<version>${jte-version}</version>
+				<configuration>
+					<!-- This is the directory where the .jte files are located. -->
+					<sourceDirectory>${project.basedir}/src/main/resources/templates</sourceDirectory>
+					<!-- This is the target/generated-sources directory where compiled templates are located. -->
+					<targetDirectory/>
+					<contentType>Html</contentType>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 	</build>
 
