@@ -71,6 +71,23 @@ spring:
         format_sql: true
 
 
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: $MAIL_PROPERTIES_MAIL_SMTP_AUTH}
+          starttls:
+            enable: ${MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE}
+            required: ${MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_REQUIRED}
+          connectiontimeout: 10000   # Timeout for establishing an SMTP connection (10 seconds)
+          timeout: 10000             # Timeout for waiting for a response from the SMTP server (10 seconds)
+          writetimeout: 10000        # Timeout for sending data to the SMTP server (10 seconds)
+
+
 app:
   keycloak:
     server-url: ${KEYCLOAK_URL}
