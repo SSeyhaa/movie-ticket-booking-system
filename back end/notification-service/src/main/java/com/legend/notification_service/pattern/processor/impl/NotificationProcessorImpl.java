@@ -3,9 +3,9 @@ package com.legend.notification_service.pattern.processor.impl;
 import com.legend.common_util.util.ExecutionContext;
 import com.legend.notification_service.constant.NotificationConstant;
 import com.legend.notification_service.model.dto.NotificationRequest;
-import com.legend.notification_service.pattern.strategy.Notification;
 import com.legend.notification_service.pattern.factory.NotificationFactory;
 import com.legend.notification_service.pattern.processor.NotificationProcessor;
+import com.legend.notification_service.pattern.strategy.Notification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class StandardNotificationProcessor extends NotificationProcessor {
+public class NotificationProcessorImpl extends NotificationProcessor {
 
   private final NotificationFactory notificationFactory;
 

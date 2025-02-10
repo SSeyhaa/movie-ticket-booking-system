@@ -2,7 +2,7 @@ package com.legend.notification_service.model.dto;
 
 import com.legend.common_util.constant.NotificationTemplate;
 import com.legend.common_util.constant.NotificationType;
-import java.util.Map;
+import com.legend.common_util.util.ExecutionContext;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,5 +17,5 @@ public class NotificationRequest {
   private String recipient;
   private NotificationType type;
   private NotificationTemplate template;
-  private Map<String, Object> metadata;
+  private ExecutionContext metadata;
 }
