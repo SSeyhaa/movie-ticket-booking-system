@@ -2,7 +2,7 @@ package com.legend.notification_service.service;
 
 import com.legend.common_util.util.ExecutionContext;
 import com.legend.notification_service.constant.NotificationConstant;
-import com.legend.notification_service.model.dto.NotificationRequest;
+import com.legend.common_util.dto.request.NotificationRequest;
 import com.legend.notification_service.pattern.processor.NotificationProcessor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

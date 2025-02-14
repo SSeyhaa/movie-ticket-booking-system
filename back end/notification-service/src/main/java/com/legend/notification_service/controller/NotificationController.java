@@ -1,6 +1,6 @@
 package com.legend.notification_service.controller;
 
-import com.legend.notification_service.model.dto.NotificationRequest;
+import com.legend.common_util.dto.request.NotificationRequest;
 import com.legend.notification_service.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

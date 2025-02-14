@@ -2,7 +2,7 @@ package com.legend.notification_service.pattern.processor.impl;
 
 import com.legend.common_util.util.ExecutionContext;
 import com.legend.notification_service.constant.NotificationConstant;
-import com.legend.notification_service.model.dto.NotificationRequest;
+import com.legend.common_util.dto.request.NotificationRequest;
 import com.legend.notification_service.pattern.factory.NotificationFactory;
 import com.legend.notification_service.pattern.processor.NotificationProcessor;
 import com.legend.notification_service.pattern.strategy.Notification;

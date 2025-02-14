@@ -82,9 +82,16 @@
 				<artifactId>spring-cloud-starter-gateway</artifactId>
 				<version>${spring-cloud.version}</version>
 			</dependency>
+
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+				<version>${spring-cloud.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-stream-binder-kafka</artifactId>
 				<version>${spring-cloud.version}</version>
 			</dependency>
 

@@ -77,6 +77,18 @@ spring:
     contexts: '!test'
 
 
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: ${KAFKA_URL} # must enable authentication and encryption in Production
+          auto-create-topics: ${KAFKA_AUTO_CREATE_TOPICS:true} # must disable auto Topic creation in Production
+          replicationFactor: 1
+      bindings:
+        notification-event-topic-out-0:
+          group: notification-group
+          destination: notification-event-topic
+
 
 app:
   keycloak:

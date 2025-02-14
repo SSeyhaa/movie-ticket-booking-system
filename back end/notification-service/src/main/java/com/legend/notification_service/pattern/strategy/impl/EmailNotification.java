@@ -4,7 +4,7 @@ import com.legend.common_util.constant.NotificationType;
 import com.legend.common_util.util.ExecutionContext;
 import com.legend.notification_service.constant.NotificationConstant;
 import com.legend.notification_service.exception.NotificationException;
-import com.legend.notification_service.model.dto.NotificationRequest;
+import com.legend.common_util.dto.request.NotificationRequest;
 import com.legend.notification_service.pattern.strategy.Notification;
 import gg.jte.TemplateEngine;
 import gg.jte.TemplateOutput;

@@ -88,6 +88,23 @@ spring:
           writetimeout: 10000        # Timeout for sending data to the SMTP server (10 seconds)
 
 
+  cloud:
+    function:
+      definition: consumeNotificationEvent
+    stream:
+      kafka:
+        binder:
+          brokers: ${KAFKA_URL} # must enable authentication and encryption in Production
+          auto-create-topics: ${KAFKA_AUTO_CREATE_TOPICS:true} # must disable auto Topic creation in Production
+          replicationFactor: 1
+      bindings:
+        consumeNotificationEvent-in-0:
+          group: notification-group
+          destination: notification-event-topic
+
+
+
+
 app:
   keycloak:
     server-url: ${KEYCLOAK_URL}

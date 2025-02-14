@@ -1,4 +1,4 @@
-package com.legend.notification_service.model.dto;
+package com.legend.common_util.dto.request;
 
 import com.legend.common_util.constant.NotificationTemplate;
 import com.legend.common_util.constant.NotificationType;
