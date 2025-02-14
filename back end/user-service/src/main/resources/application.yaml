@@ -87,7 +87,7 @@ spring:
       bindings:
         notification-event-topic-out-0:
           group: notification-group
-          destination: notification-event-topic
+          destination: NOTIFICATION_EVENT_TOPIC
 
 
 app:

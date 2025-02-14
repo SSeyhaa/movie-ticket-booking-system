@@ -1,12 +1,18 @@
 package com.legend.user_service.service;
 
+import com.legend.common_util.constant.NotificationTemplate;
+import com.legend.common_util.constant.NotificationType;
+import com.legend.common_util.constant.TopicMessageBinding;
+import com.legend.common_util.constant.UserConstants;
+import com.legend.common_util.dto.request.NotificationRequest;
+import com.legend.common_util.util.ExecutionContext;
+import com.legend.user_service.exception.ResourceNotFoundException;
+import com.legend.user_service.exception.UserAlreadyExistsException;
+import com.legend.user_service.exception.UserCreationException;
 import com.legend.user_service.model.dto.request.UserRequest;
 import com.legend.user_service.model.dto.response.UserResponse;
 import com.legend.user_service.model.entity.SystemRole;
 import com.legend.user_service.model.entity.User;
-import com.legend.user_service.exception.ResourceNotFoundException;
-import com.legend.user_service.exception.UserAlreadyExistsException;
-import com.legend.user_service.exception.UserCreationException;
 import com.legend.user_service.repository.RoleRepository;
 import com.legend.user_service.repository.UserRepository;
 import java.util.Optional;
@@ -15,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.modelmapper.ModelMapper;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Slf4j
 public class UserService {
+  private final StreamBridge streamBridge;
   private final ModelMapper modelMapper;
   private final UserRepository userRepository;
   private final KeycloakService keycloakService;
@@ -40,11 +48,10 @@ public class UserService {
             "User with email " + userRepresentation.getEmail() + " already exists in Database");
       }
 
-      userRequest.setKeycloakId(userRepresentation.getId());
-      User user = modelMapper.map(userRequest, User.class);
-      Set<SystemRole> systemRoles = roleRepository.findByRoleIn(userRequest.getRoles());
-      user.setSystemRoles(systemRoles);
-      userCreated = userRepository.save(user);
+      userCreated = createUserDB(userRepresentation.getId(), userRequest);
+
+      notifyUserCreated(userCreated);
+
       log.info(
           "----- User with email {} created successfully in database server",
           userCreated.getEmail());
@@ -59,6 +66,28 @@ public class UserService {
       log.error("----- {}", e.getMessage(), e);
       throw new UserCreationException(e.getMessage(), e);
     }
+  }
+
+  private User createUserDB(String userRepresentationId, UserRequest userRequest) {
+    userRequest.setKeycloakId(userRepresentationId);
+    User user = modelMapper.map(userRequest, User.class);
+    Set<SystemRole> systemRoles = roleRepository.findByRoleIn(userRequest.getRoles());
+    user.setSystemRoles(systemRoles);
+    return userRepository.save(user);
+  }
+
+  private void notifyUserCreated(User userCreated) {
+    NotificationRequest notificationRequest = new NotificationRequest();
+    notificationRequest.setRecipient(userCreated.getEmail());
+    notificationRequest.setType(NotificationType.EMAIL);
+    notificationRequest.setTemplate(NotificationTemplate.USER_REGISTRATION);
+
+    ExecutionContext metadata = new ExecutionContext();
+    metadata.put(UserConstants.FIRST_NAME, userCreated.getFirstName());
+    metadata.put(UserConstants.LAST_NAME, userCreated.getLastName());
+    notificationRequest.setMetadata(metadata);
+
+    streamBridge.send(TopicMessageBinding.NOTIFICATION_EVENT_TOPIC.toString(), notificationRequest);
   }
 
   public UserResponse getUserById(Long id) {

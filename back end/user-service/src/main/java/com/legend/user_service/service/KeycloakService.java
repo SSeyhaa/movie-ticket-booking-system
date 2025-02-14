@@ -2,10 +2,10 @@ package com.legend.user_service.service;
 
 import com.legend.common_util.constant.SystemRole;
 import com.legend.user_service.config.KeycloakProperty;
-import com.legend.user_service.model.dto.request.UserRequest;
 import com.legend.user_service.exception.RoleAssignmentException;
 import com.legend.user_service.exception.UserAlreadyExistsException;
 import com.legend.user_service.exception.UserCreationException;
+import com.legend.user_service.model.dto.request.UserRequest;
 import jakarta.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,7 +47,7 @@ public class KeycloakService {
       try (Response response = usersResource.create(user)) {
 
         if (response.getStatus() != HTTP_STATUS_CREATED) {
-          log.error("----- Failed to create user in Keycloak server");
+          log.error("----- Failed to create user in Keycloak server: {}", response.getStatusInfo());
           throw new UserCreationException(
               "Failed to create user in Keycloak server : " + response.getStatusInfo());
         }

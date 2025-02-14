@@ -100,7 +100,7 @@ spring:
       bindings:
         consumeNotificationEvent-in-0:
           group: notification-group
-          destination: notification-event-topic
+          destination: NOTIFICATION_EVENT_TOPIC
 
 
 
