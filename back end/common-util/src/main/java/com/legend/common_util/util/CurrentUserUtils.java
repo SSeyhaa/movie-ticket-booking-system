@@ -18,7 +18,7 @@ public class CurrentUserUtils {
    * @return an Optional containing the current user, or an empty Optional if the user is not
    *     authenticated or the authentication is not of type CustomJwtAuthenticationToken.
    */
-  private static Optional<CustomJwtAuthenticationToken> getCurrentUserOptional() {
+  public static Optional<CustomJwtAuthenticationToken> getCurrentUserOptional() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication instanceof CustomJwtAuthenticationToken currentUser) {
       return Optional.of(currentUser);

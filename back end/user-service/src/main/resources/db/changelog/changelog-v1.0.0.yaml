@@ -83,6 +83,12 @@ databaseChangeLog:
                   type: boolean
                   defaultValueBoolean: false
 
+  - include:
+      file: audit-columns.yaml
+      relativeToChangelogFile: true
+  - property:
+      name: tableName
+      value: users
 
   - changeSet:
       context: "!test"

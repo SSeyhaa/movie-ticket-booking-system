@@ -1,0 +1,33 @@
+databaseChangeLog:
+  - changeSet:
+      id: audit-columns-for-${tableName}
+      author: SENG Seyha
+      changes:
+        - addColumn:
+            tableName: ${tableName}
+            columns:
+              - column:
+                  name: created_by
+                  type: varchar(255)
+                  constraints:
+                    nullable: true
+                  remarks: "User who created the record (non-updatable)"
+              - column:
+                  name: created_date
+                  type: timestamp
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  remarks: "Date when record was created (non-updatable)"
+              - column:
+                  name: last_modified_by
+                  type: varchar(255)
+                  constraints:
+                    nullable: true
+                  remarks: "User who last modified the record"
+              - column:
+                  name: last_modified_date
+                  type: timestamp
+                  constraints:
+                    nullable: true
+                  remarks: "Date when record was last modified"

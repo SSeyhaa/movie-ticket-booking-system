@@ -1,14 +1,11 @@
-package com.legend.common_util.audit;
+package com.legend.common_util.config;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-import java.time.Instant;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.MappedSuperclass;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -17,9 +14,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @EntityListeners(AuditingEntityListener.class)
-@AllArgsConstructor
 @NoArgsConstructor
-@Setter
+@MappedSuperclass
 @Getter
 @SuperBuilder
 public class Auditable {
@@ -30,13 +26,9 @@ public class Auditable {
 
   @CreatedDate
   @Column(updatable = false)
-  @Temporal(TemporalType.TIMESTAMP)
-  private Instant createdDate;
+  private LocalDateTime createdDate;
 
-  @LastModifiedBy
-  private String lastModifiedBy;
+  @LastModifiedBy private String lastModifiedBy;
 
-  @LastModifiedDate
-  @Temporal(TemporalType.TIMESTAMP)
-  private Instant lastModifiedDate;
+  @LastModifiedDate private LocalDateTime lastModifiedDate;
 }

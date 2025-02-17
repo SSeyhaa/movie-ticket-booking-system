@@ -1,6 +1,6 @@
 package com.legend.user_service.model.entity;
 
-import com.legend.common_util.audit.Auditable;
+import com.legend.common_util.config.Auditable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
