@@ -124,6 +124,11 @@
 			<artifactId>hypersistence-utils-hibernate-63</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>

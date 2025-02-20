@@ -27,6 +27,20 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
   }
 
+  @ExceptionHandler(PdfProcessingException.class)
+  public ResponseEntity<ErrorResponse> handlePdfProcessingException(
+      PdfProcessingException e, WebRequest request) {
+
+    ErrorResponse errorResponse =
+        buildErrorResponse(
+            HttpStatus.INTERNAL_SERVER_ERROR,
+            "PDF Processing Error",
+            e.getMessage(),
+            request.getDescription(false),
+            e.getClass().getSimpleName());
+    return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
   private ErrorResponse buildErrorResponse(
       HttpStatus status, String error, String message, String path, String exceptionType) {
     return ErrorResponse.builder()
