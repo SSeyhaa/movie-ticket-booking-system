@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<!-- Reference to the custom parent -->
-		<groupId>com.legend</groupId>
+		<groupId>kh.dev</groupId>
 		<artifactId>starter-parent</artifactId>
 		<version>1.0.0</version>  <!-- project version -->
 		<relativePath>../starter-parent/pom.xml</relativePath>
@@ -36,7 +36,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.legend</groupId>
+			<groupId>kh.dev</groupId>
 			<artifactId>common-util</artifactId>
 		</dependency>
 

@@ -1,4 +1,4 @@
-@param com.legend.common_util.dto.UserRegistrationJteParam userRegistrationJteParam
+@param kh.dev.common_util.dto.UserRegistrationJteParam userRegistrationJteParam
 
 <!DOCTYPE html>
 <html lang="en-US">
