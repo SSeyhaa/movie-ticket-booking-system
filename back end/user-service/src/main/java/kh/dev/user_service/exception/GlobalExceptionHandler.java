@@ -107,19 +107,19 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
-  @ExceptionHandler(AuthenticationException.class)
-  public ResponseEntity<ErrorResponse> handleAuthenticationException(
-      AuthenticationException e, WebRequest request) {
-    log.error("error occur during access token: {}", e.getMessage(), e);
+  @ExceptionHandler(InvalidException.class)
+  public ResponseEntity<ErrorResponse> handleInvalidException(
+      InvalidException e, WebRequest request) {
+    log.error(e.getMessage(), e);
 
     ErrorResponse errorResponse =
         buildErrorResponse(
-            HttpStatus.UNAUTHORIZED,
-            HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+            HttpStatus.BAD_REQUEST,
+            HttpStatus.BAD_REQUEST.getReasonPhrase(),
             e.getMessage(),
             request.getDescription(false),
             e.getClass().getSimpleName());
-    return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
   }
 
   private ErrorResponse buildErrorResponse(

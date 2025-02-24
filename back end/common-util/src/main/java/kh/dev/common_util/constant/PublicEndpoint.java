@@ -11,7 +11,8 @@ public class PublicEndpoint {
   public static final String[] ACTUATOR_ENDPOINTS = {"/actuator/**"};
 
   public static final String[] ALL_PUBLIC_ENDPOINTS =
-      concatArrays(new String[] {"/"}, SWAGGER_ENDPOINTS, ACTUATOR_ENDPOINTS);
+      concatArrays(
+          new String[] {"/"}, new String[] {"/public/**"}, SWAGGER_ENDPOINTS, ACTUATOR_ENDPOINTS);
 
   private static String[] concatArrays(String[]... arrays) {
     return Stream.of(arrays).flatMap(Stream::of).toArray(String[]::new);

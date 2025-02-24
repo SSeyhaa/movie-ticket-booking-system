@@ -13,4 +13,14 @@ public interface KeycloakClient {
       value = "/protocol/openid-connect/token",
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
   AccessTokenResponse getAccessToken(Map<String, ?> form);
+
+  @PostMapping(
+      value = "/protocol/openid-connect/token",
+      consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+  AccessTokenResponse getRefreshToken(Map<String, ?> form);
+
+  @PostMapping(
+      value = "/protocol/openid-connect/logout",
+      consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+  void logout(Map<String, ?> form);
 }

@@ -9,7 +9,7 @@ import java.util.Set;
 import kh.dev.common_util.constant.SystemRole;
 import kh.dev.user_service.client.KeycloakClient;
 import kh.dev.user_service.config.KeycloakProperty;
-import kh.dev.user_service.exception.AuthenticationException;
+import kh.dev.user_service.exception.InvalidException;
 import kh.dev.user_service.exception.RoleAssignmentException;
 import kh.dev.user_service.exception.UserAlreadyExistsException;
 import kh.dev.user_service.exception.UserCreationException;
@@ -50,8 +50,25 @@ public class KeycloakService {
 
       return keycloakClient.getAccessToken(form.asMap());
     } catch (Exception e) {
-      throw new AuthenticationException(
-          "Invalid credentials or Unable to access Authorization server", e);
+      throw new InvalidException("Invalid credentials", e);
+    }
+  }
+
+  public AccessTokenResponse refreshAccessToken(String refreshToken) {
+    try {
+      Form form = buildRefreshTokenRequestForm(refreshToken);
+      return keycloakClient.getRefreshToken(form.asMap());
+    } catch (Exception e) {
+      throw new InvalidException("Invalid refresh token", e);
+    }
+  }
+
+  public void logout(String refreshToken) {
+    try {
+      Form form = buildLogoutRequestForm(refreshToken);
+      keycloakClient.logout(form.asMap());
+    } catch (Exception e) {
+      throw new InvalidException("Invalid refresh token", e);
     }
   }
 
@@ -62,6 +79,22 @@ public class KeycloakService {
         .param(OAuth2Constants.GRANT_TYPE, OAuth2Constants.PASSWORD)
         .param(OAuth2Constants.USERNAME, email)
         .param(OAuth2Constants.PASSWORD, password);
+  }
+
+  private Form buildRefreshTokenRequestForm(String refreshToken) {
+    return new Form()
+        .param(OAuth2Constants.CLIENT_ID, keycloakProperty.getClientId())
+        .param(OAuth2Constants.CLIENT_SECRET, keycloakProperty.getClientSecret())
+        .param(OAuth2Constants.GRANT_TYPE, OAuth2Constants.REFRESH_TOKEN)
+        .param(OAuth2Constants.REFRESH_TOKEN, refreshToken);
+  }
+
+  private Form buildLogoutRequestForm(String refreshToken) {
+    return new Form()
+        .param(OAuth2Constants.CLIENT_ID, keycloakProperty.getClientId())
+        .param(OAuth2Constants.CLIENT_SECRET, keycloakProperty.getClientSecret())
+        .param(OAuth2Constants.GRANT_TYPE, OAuth2Constants.LOGOUT_TOKEN)
+        .param(OAuth2Constants.REFRESH_TOKEN, refreshToken);
   }
 
   public UserRepresentation createUser(UserRequest userRequest) {
