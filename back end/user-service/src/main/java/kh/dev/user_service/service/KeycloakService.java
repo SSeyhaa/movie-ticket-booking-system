@@ -1,18 +1,23 @@
 package kh.dev.user_service.service;
 
+import jakarta.ws.rs.core.Form;
 import jakarta.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import kh.dev.common_util.constant.SystemRole;
+import kh.dev.user_service.client.KeycloakClient;
 import kh.dev.user_service.config.KeycloakProperty;
+import kh.dev.user_service.exception.AuthenticationException;
 import kh.dev.user_service.exception.RoleAssignmentException;
 import kh.dev.user_service.exception.UserAlreadyExistsException;
 import kh.dev.user_service.exception.UserCreationException;
+import kh.dev.user_service.model.dto.request.CredentialRequest;
 import kh.dev.user_service.model.dto.request.UserRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.RealmResource;
@@ -20,6 +25,7 @@ import org.keycloak.admin.client.resource.RoleResource;
 import org.keycloak.admin.client.resource.RolesResource;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
+import org.keycloak.representations.AccessTokenResponse;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -34,6 +40,29 @@ public class KeycloakService {
 
   private final KeycloakProperty keycloakProperty;
   private final Keycloak keycloak;
+  private final KeycloakClient keycloakClient;
+
+  public AccessTokenResponse getAccessToken(CredentialRequest credentialRequest) {
+
+    try {
+      Form form =
+          buildTokenRequestForm(credentialRequest.getEmail(), credentialRequest.getPassword());
+
+      return keycloakClient.getAccessToken(form.asMap());
+    } catch (Exception e) {
+      throw new AuthenticationException(
+          "Invalid credentials or Unable to access Authorization server", e);
+    }
+  }
+
+  private Form buildTokenRequestForm(String email, String password) {
+    return new Form()
+        .param(OAuth2Constants.CLIENT_ID, keycloakProperty.getClientId())
+        .param(OAuth2Constants.CLIENT_SECRET, keycloakProperty.getClientSecret())
+        .param(OAuth2Constants.GRANT_TYPE, OAuth2Constants.PASSWORD)
+        .param(OAuth2Constants.USERNAME, email)
+        .param(OAuth2Constants.PASSWORD, password);
+  }
 
   public UserRepresentation createUser(UserRequest userRequest) {
     RealmResource realmResource = keycloak.realm(keycloakProperty.getRealm());

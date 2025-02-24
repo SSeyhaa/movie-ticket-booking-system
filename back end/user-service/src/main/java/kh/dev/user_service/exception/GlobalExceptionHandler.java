@@ -1,12 +1,15 @@
 package kh.dev.user_service.exception;
 
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 import kh.dev.common_util.dto.response.ErrorResponse;
 import kh.dev.common_util.exception.AccessDeniedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.web.csrf.CsrfException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -70,6 +73,27 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
   }
 
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
+      MethodArgumentNotValidException e, WebRequest request) {
+    String errorMessages = extractValidationErrors(e);
+    log.error("Validation error: {}", errorMessages, e);
+    ErrorResponse errorResponse =
+        buildErrorResponse(
+            HttpStatus.BAD_REQUEST,
+            HttpStatus.BAD_REQUEST.getReasonPhrase(),
+            errorMessages,
+            request.getDescription(false),
+            e.getClass().getSimpleName());
+    return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+  }
+
+  private String extractValidationErrors(MethodArgumentNotValidException e) {
+    return e.getBindingResult().getAllErrors().stream()
+        .map(error -> ((FieldError) error).getField() + ": " + error.getDefaultMessage())
+        .collect(Collectors.joining(", "));
+  }
+
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ErrorResponse> handleGlobalException(Exception e, WebRequest request) {
     log.error("Unexpected error: {}", e.getMessage(), e);
@@ -77,10 +101,25 @@ public class GlobalExceptionHandler {
         buildErrorResponse(
             HttpStatus.INTERNAL_SERVER_ERROR,
             "Internal Server Error",
-            "An unexpected error occurred. Please try again later.",
+            e.getMessage(),
             request.getDescription(false),
             e.getClass().getSimpleName());
     return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  @ExceptionHandler(AuthenticationException.class)
+  public ResponseEntity<ErrorResponse> handleAuthenticationException(
+      AuthenticationException e, WebRequest request) {
+    log.error("error occur during access token: {}", e.getMessage(), e);
+
+    ErrorResponse errorResponse =
+        buildErrorResponse(
+            HttpStatus.UNAUTHORIZED,
+            HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+            e.getMessage(),
+            request.getDescription(false),
+            e.getClass().getSimpleName());
+    return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
   }
 
   private ErrorResponse buildErrorResponse(
