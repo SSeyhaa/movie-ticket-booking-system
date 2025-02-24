@@ -9,8 +9,8 @@ import java.util.Set;
 import kh.dev.common_util.constant.SystemRole;
 import kh.dev.user_service.client.KeycloakClient;
 import kh.dev.user_service.config.KeycloakProperty;
-import kh.dev.user_service.exception.InvalidException;
 import kh.dev.user_service.exception.RoleAssignmentException;
+import kh.dev.user_service.exception.UnauthorizedException;
 import kh.dev.user_service.exception.UserAlreadyExistsException;
 import kh.dev.user_service.exception.UserCreationException;
 import kh.dev.user_service.model.dto.request.CredentialRequest;
@@ -50,7 +50,7 @@ public class KeycloakService {
 
       return keycloakClient.getAccessToken(form.asMap());
     } catch (Exception e) {
-      throw new InvalidException("Invalid credentials", e);
+      throw new UnauthorizedException("Invalid credentials", e);
     }
   }
 
@@ -59,7 +59,7 @@ public class KeycloakService {
       Form form = buildRefreshTokenRequestForm(refreshToken);
       return keycloakClient.getRefreshToken(form.asMap());
     } catch (Exception e) {
-      throw new InvalidException("Invalid refresh token", e);
+      throw new UnauthorizedException("Invalid refresh token", e);
     }
   }
 
@@ -68,7 +68,7 @@ public class KeycloakService {
       Form form = buildLogoutRequestForm(refreshToken);
       keycloakClient.logout(form.asMap());
     } catch (Exception e) {
-      throw new InvalidException("Invalid refresh token", e);
+      throw new UnauthorizedException("Invalid refresh token", e);
     }
   }
 
