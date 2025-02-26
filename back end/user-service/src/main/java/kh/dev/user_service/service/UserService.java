@@ -11,6 +11,8 @@ import kh.dev.common_util.util.ExecutionContext;
 import kh.dev.user_service.exception.ResourceNotFoundException;
 import kh.dev.user_service.exception.UserAlreadyExistsException;
 import kh.dev.user_service.exception.UserCreationException;
+import kh.dev.user_service.exception.ValidationException;
+import kh.dev.user_service.model.dto.request.CredentialRequest;
 import kh.dev.user_service.model.dto.request.UserRequest;
 import kh.dev.user_service.model.dto.response.UserResponse;
 import kh.dev.user_service.model.entity.SystemRole;
@@ -90,6 +92,15 @@ public class UserService {
     streamBridge.send(TopicMessageBinding.NOTIFICATION_EVENT_TOPIC.toString(), notificationRequest);
   }
 
+  public void changePassword(CredentialRequest credentialRequest) {
+    if (!credentialRequest.getPassword().equals(credentialRequest.getConfirmPassword())) {
+      throw new ValidationException("Password and confirm password do not match");
+    }
+
+    User user = findUserByIdAndEmail(credentialRequest.getId(), credentialRequest.getEmail());
+    keycloakService.changePassword(user.getKeycloakId(), credentialRequest.getPassword());
+  }
+
   public UserResponse getUserById(Long id) {
     User user = findUserById(id);
     return modelMapper.map(user, UserResponse.class);
@@ -115,6 +126,15 @@ public class UserService {
     return userRepository
         .findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+  }
+
+  private User findUserByIdAndEmail(Long id, String email) {
+    return userRepository
+        .findByIdAndEmail(id, email)
+        .orElseThrow(
+            () ->
+                new ResourceNotFoundException(
+                    String.format("User not found with id : %d, email: %s", id, email)));
   }
 
   @Transactional

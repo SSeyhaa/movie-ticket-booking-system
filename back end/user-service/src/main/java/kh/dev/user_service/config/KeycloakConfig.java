@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
+import org.keycloak.admin.client.resource.RealmResource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -31,5 +32,10 @@ public class KeycloakConfig {
         .clientId(keycloakProperty.getClientId())
         .clientSecret(keycloakProperty.getClientSecret())
         .build();
+  }
+
+  @Bean
+  public RealmResource configRealmResource(Keycloak keycloak) {
+    return keycloak.realm(keycloakProperty.getRealm());
   }
 }

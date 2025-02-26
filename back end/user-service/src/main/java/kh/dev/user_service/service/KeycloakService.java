@@ -17,9 +17,9 @@ import kh.dev.user_service.model.dto.request.CredentialRequest;
 import kh.dev.user_service.model.dto.request.UserRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.CreatedResponseUtil;
-import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.RoleResource;
 import org.keycloak.admin.client.resource.RolesResource;
@@ -39,8 +39,8 @@ public class KeycloakService {
   private static final int HTTP_STATUS_CREATED = 201;
 
   private final KeycloakProperty keycloakProperty;
-  private final Keycloak keycloak;
   private final KeycloakClient keycloakClient;
+  private final RealmResource realmResource;
 
   public AccessTokenResponse getAccessToken(CredentialRequest credentialRequest) {
 
@@ -98,7 +98,6 @@ public class KeycloakService {
   }
 
   public UserRepresentation createUser(UserRequest userRequest) {
-    RealmResource realmResource = keycloak.realm(keycloakProperty.getRealm());
     UsersResource usersResource = realmResource.users();
 
     List<UserRepresentation> existingUsers =
@@ -131,6 +130,29 @@ public class KeycloakService {
     }
   }
 
+  public void changePassword(String userId, String newPassword) {
+    String userIdTrimmed = userId.trim();
+    String newPasswordTrimmed = newPassword.trim();
+
+    if (StringUtils.isBlank(userIdTrimmed)) {
+      throw new IllegalArgumentException("User id cannot be null or empty");
+    }
+
+    if (StringUtils.isBlank(newPasswordTrimmed)) {
+      throw new IllegalArgumentException("New password cannot be null or empty");
+    }
+
+    UsersResource usersResource = realmResource.users();
+    UserResource userResource = usersResource.get(userIdTrimmed);
+    if (userResource == null) {
+      throw new IllegalArgumentException("User not found with ID: " + userId);
+    }
+
+    UserRepresentation existingUser = userResource.toRepresentation();
+    existingUser.setCredentials(Collections.singletonList(buildUserCredential(newPasswordTrimmed)));
+    userResource.update(existingUser);
+  }
+
   private UserRepresentation buildUserRepresentation(UserRequest userRequest) {
     UserRepresentation user = new UserRepresentation();
     user.setUsername(userRequest.getUsername());
@@ -140,13 +162,18 @@ public class KeycloakService {
     user.setFirstName(userRequest.getFirstName());
     user.setLastName(userRequest.getLastName());
 
-    CredentialRepresentation credential = new CredentialRepresentation();
-    credential.setTemporary(false);
-    credential.setType(CredentialRepresentation.PASSWORD);
-    credential.setValue(userRequest.getPassword());
+    CredentialRepresentation credential = buildUserCredential(userRequest.getPassword());
 
     user.setCredentials(Collections.singletonList(credential));
     return user;
+  }
+
+  private CredentialRepresentation buildUserCredential(String password) {
+    CredentialRepresentation credential = new CredentialRepresentation();
+    credential.setTemporary(false);
+    credential.setType(CredentialRepresentation.PASSWORD);
+    credential.setValue(password);
+    return credential;
   }
 
   private void assignRolesToUser(
@@ -170,7 +197,6 @@ public class KeycloakService {
   }
 
   public void deleteUserById(String userId) {
-    RealmResource realmResource = keycloak.realm(keycloakProperty.getRealm());
     UsersResource usersResource = realmResource.users();
     UserResource userResource = usersResource.get(userId);
     userResource.remove();

@@ -1,9 +1,14 @@
 package kh.dev.user_service.controller;
 
+import jakarta.validation.Valid;
+import java.time.ZonedDateTime;
+import kh.dev.common_util.dto.response.Response;
+import kh.dev.user_service.model.dto.request.CredentialRequest;
 import kh.dev.user_service.model.dto.request.UserRequest;
 import kh.dev.user_service.model.dto.response.UserResponse;
 import kh.dev.user_service.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +28,19 @@ public class UserController {
   @PostMapping
   public UserResponse createUser(@RequestBody UserRequest userRequest) {
     return userService.create(userRequest);
+  }
+
+  @PutMapping("/password")
+  public ResponseEntity<Response> changePassword(
+      @RequestBody @Valid CredentialRequest credentialRequest) {
+    userService.changePassword(credentialRequest);
+    return ResponseEntity.ok(
+        Response.builder()
+            .code(HttpStatus.OK.value())
+            .status("success")
+            .message("Password updated successfully")
+            .timestamp(ZonedDateTime.now())
+            .build());
   }
 
   @GetMapping("/{id}")
