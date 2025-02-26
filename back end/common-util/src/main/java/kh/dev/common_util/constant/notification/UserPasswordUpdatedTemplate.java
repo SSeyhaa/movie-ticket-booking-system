@@ -6,18 +6,18 @@ import kh.dev.common_util.constant.UserConstants;
 import kh.dev.common_util.dto.UserPropertyJteParam;
 import kh.dev.common_util.util.ExecutionContext;
 
-public class UserRegistrationTemplate implements Template {
+public class UserPasswordUpdatedTemplate implements Template {
 
-  public static final Template INSTANCE = new UserRegistrationTemplate();
+  public static final Template INSTANCE = new UserPasswordUpdatedTemplate();
 
   @Override
   public String getSubject() {
-    return "User Registration Successful";
+    return "Security Alert: Your Password Has Been Changed";
   }
 
   @Override
   public String getFileName() {
-    return NotificationTemplate.USER_REGISTRATION.toString().concat(FileExtension.JTE);
+    return NotificationTemplate.USER_PASSWORD_UPDATE.toString().concat(FileExtension.JTE);
   }
 
   @Override

@@ -96,25 +96,25 @@
 <body>
 <div class="container">
     <div class="header">
-        <h1 class="header-title">Welcome to Cinema KH!</h1>
+        <h1 class="header-title">Cinema KH - Password Updated</h1>
     </div>
 
     <div class="content">
         <p class="welcome-text">Hi ${userRegistrationJteParam.getFirstName()} ${userRegistrationJteParam.getLastName()},</p>
 
-        <p>We're excited to have you join our community! Your account has been successfully created.</p>
+        <p>Your password has been successfully updated.</p>
 
         <div class="info-box">
-            <strong>Your registered email:</strong><br>
+            <strong>Account Email:</strong><br>
             ${userRegistrationJteParam.getEmail()}
         </div>
 
-        <p>If you have any questions or need assistance, our support team is here to help at:</p>
+        <p>If you did not request this change, please reset your password immediately and contact our support team at:</p>
         <span class="support-email">dev.kh@gmail.com</span>
 
         <div class="divider"></div>
 
-        <p><strong>Note:</strong> If you didn't create this account, please contact us immediately.</p>
+        <p><strong>Security Tip:</strong> Use a strong password and never share it with anyone.</p>
     </div>
 
     <div class="footer">
@@ -122,5 +122,7 @@
         <p>This is an automated message. Please do not reply to this email.</p>
     </div>
 </div>
+
+
 </body>
 </html>

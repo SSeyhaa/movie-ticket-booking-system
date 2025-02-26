@@ -99,6 +99,22 @@ public class UserService {
 
     User user = findUserByIdAndEmail(credentialRequest.getId(), credentialRequest.getEmail());
     keycloakService.changePassword(user.getKeycloakId(), credentialRequest.getPassword());
+
+    notifyUserPasswordUpdated(user);
+  }
+
+  private void notifyUserPasswordUpdated(User user) {
+    NotificationRequest notificationRequest = new NotificationRequest();
+    notificationRequest.setRecipient(user.getEmail());
+    notificationRequest.setType(NotificationType.EMAIL);
+    notificationRequest.setTemplate(NotificationTemplate.USER_PASSWORD_UPDATE);
+
+    ExecutionContext metadata = new ExecutionContext();
+    metadata.put(UserConstants.FIRST_NAME, user.getFirstName());
+    metadata.put(UserConstants.LAST_NAME, user.getLastName());
+    notificationRequest.setMetadata(metadata);
+
+    streamBridge.send(TopicMessageBinding.NOTIFICATION_EVENT_TOPIC.toString(), notificationRequest);
   }
 
   public UserResponse getUserById(Long id) {

@@ -9,7 +9,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
-public class UserRegistrationJteParam {
+public class UserPropertyJteParam {
   private String firstName;
   private String lastName;
   private String email;
