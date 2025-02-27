@@ -1,9 +1,11 @@
 package kh.dev.user_service.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.time.ZonedDateTime;
 import kh.dev.common_util.dto.response.Response;
-import kh.dev.user_service.model.dto.request.CredentialRequest;
+import kh.dev.user_service.model.dto.request.PasswordChangeRequest;
 import kh.dev.user_service.model.dto.request.UserRequest;
 import kh.dev.user_service.model.dto.response.UserResponse;
 import kh.dev.user_service.service.UserService;
@@ -32,8 +34,11 @@ public class UserController {
 
   @PutMapping("/password")
   public ResponseEntity<Response> changePassword(
-      @RequestBody @Valid CredentialRequest credentialRequest) {
-    userService.changePassword(credentialRequest);
+      HttpServletRequest request,
+      HttpServletResponse response,
+      @RequestBody @Valid PasswordChangeRequest passwordChangeRequest) {
+
+    userService.changePassword(request, response, passwordChangeRequest);
     return ResponseEntity.ok(
         Response.builder()
             .code(HttpStatus.OK.value())

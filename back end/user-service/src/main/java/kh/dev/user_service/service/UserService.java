@@ -1,18 +1,22 @@
 package kh.dev.user_service.service;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Optional;
 import java.util.Set;
+import kh.dev.common_util.config.CustomJwtAuthenticationToken;
 import kh.dev.common_util.constant.NotificationTemplate;
 import kh.dev.common_util.constant.NotificationType;
 import kh.dev.common_util.constant.TopicMessageBinding;
 import kh.dev.common_util.constant.UserConstants;
 import kh.dev.common_util.dto.request.NotificationRequest;
+import kh.dev.common_util.util.CurrentUserUtils;
 import kh.dev.common_util.util.ExecutionContext;
 import kh.dev.user_service.exception.ResourceNotFoundException;
 import kh.dev.user_service.exception.UserAlreadyExistsException;
 import kh.dev.user_service.exception.UserCreationException;
 import kh.dev.user_service.exception.ValidationException;
-import kh.dev.user_service.model.dto.request.CredentialRequest;
+import kh.dev.user_service.model.dto.request.PasswordChangeRequest;
 import kh.dev.user_service.model.dto.request.UserRequest;
 import kh.dev.user_service.model.dto.response.UserResponse;
 import kh.dev.user_service.model.entity.SystemRole;
@@ -92,14 +96,27 @@ public class UserService {
     streamBridge.send(TopicMessageBinding.NOTIFICATION_EVENT_TOPIC.toString(), notificationRequest);
   }
 
-  public void changePassword(CredentialRequest credentialRequest) {
-    if (!credentialRequest.getPassword().equals(credentialRequest.getConfirmPassword())) {
+  public void changePassword(
+      HttpServletRequest request,
+      HttpServletResponse response,
+      PasswordChangeRequest passwordChangeRequest) {
+    KeycloakService.getRefreshTokenCookie(request); // throw exception if refresh token not found
+
+    CustomJwtAuthenticationToken currentUser = CurrentUserUtils.getCurrentUser();
+    if (!currentUser.getEmail().equals(passwordChangeRequest.getEmail())) {
+      throw new ValidationException("Access denies, Invalid email");
+    }
+
+    if (!passwordChangeRequest.getPassword().equals(passwordChangeRequest.getConfirmPassword())) {
       throw new ValidationException("Password and confirm password do not match");
     }
 
-    User user = findUserByIdAndEmail(credentialRequest.getId(), credentialRequest.getEmail());
-    keycloakService.changePassword(user.getKeycloakId(), credentialRequest.getPassword());
+    User user =
+        findUserByIdAndEmail(passwordChangeRequest.getId(), passwordChangeRequest.getEmail());
+    passwordChangeRequest.setKeycloakId(user.getKeycloakId());
 
+    keycloakService.changePassword(passwordChangeRequest);
+    keycloakService.logout(request, response);
     notifyUserPasswordUpdated(user);
   }
 

@@ -1,23 +1,29 @@
 package kh.dev.user_service.service;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.core.Form;
 import jakarta.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import kh.dev.common_util.constant.SystemRole;
 import kh.dev.user_service.client.KeycloakClient;
 import kh.dev.user_service.config.KeycloakProperty;
+import kh.dev.user_service.exception.ResourceNotFoundException;
 import kh.dev.user_service.exception.RoleAssignmentException;
 import kh.dev.user_service.exception.UnauthorizedException;
 import kh.dev.user_service.exception.UserAlreadyExistsException;
 import kh.dev.user_service.exception.UserCreationException;
+import kh.dev.user_service.exception.ValidationException;
 import kh.dev.user_service.model.dto.request.CredentialRequest;
+import kh.dev.user_service.model.dto.request.PasswordChangeRequest;
 import kh.dev.user_service.model.dto.request.UserRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.resource.RealmResource;
@@ -29,18 +35,39 @@ import org.keycloak.representations.AccessTokenResponse;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.WebUtils;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class KeycloakService {
 
+  public static final String REFRESH_TOKEN = "refresh_token";
+  private static final String USER_SERVICE = "/user-service";
   private static final int HTTP_STATUS_CREATED = 201;
 
   private final KeycloakProperty keycloakProperty;
   private final KeycloakClient keycloakClient;
   private final RealmResource realmResource;
+
+  public static ResponseCookie createRefreshTokenCookie(String refreshToken, long expiresIn) {
+    return ResponseCookie.from(REFRESH_TOKEN, refreshToken)
+        // .domain("localhost") // Restrict cookie to specific domain
+        .path(USER_SERVICE) // Restrict cookie to refresh-token path
+        .httpOnly(true) // Prevent access to cookie from JavaScript
+        .secure(true) // Only sent over HTTPS
+        .sameSite("Strict") // Prevent sending cookies in cross-origin requests, CSRF protection
+        .maxAge(expiresIn)
+        .build();
+  }
+
+  public static Cookie getRefreshTokenCookie(HttpServletRequest request) {
+    return Optional.ofNullable(WebUtils.getCookie(request, KeycloakService.REFRESH_TOKEN))
+        .orElseThrow(() -> new ResourceNotFoundException("Refresh token not found"));
+  }
 
   public AccessTokenResponse getAccessToken(CredentialRequest credentialRequest) {
 
@@ -63,10 +90,15 @@ public class KeycloakService {
     }
   }
 
-  public void logout(String refreshToken) {
+  public void logout(HttpServletRequest request, HttpServletResponse response) {
+
+    Cookie refreshTokenCookie = KeycloakService.getRefreshTokenCookie(request);
     try {
-      Form form = buildLogoutRequestForm(refreshToken);
+      Form form = buildLogoutRequestForm(refreshTokenCookie.getValue());
       keycloakClient.logout(form.asMap());
+
+      ResponseCookie responseCookie = createRefreshTokenCookie("", 0);
+      response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
     } catch (Exception e) {
       throw new UnauthorizedException("Invalid refresh token", e);
     }
@@ -130,27 +162,35 @@ public class KeycloakService {
     }
   }
 
-  public void changePassword(String userId, String newPassword) {
-    String userIdTrimmed = userId.trim();
-    String newPasswordTrimmed = newPassword.trim();
+  public void changePassword(PasswordChangeRequest passwordChangeRequest) {
 
-    if (StringUtils.isBlank(userIdTrimmed)) {
-      throw new IllegalArgumentException("User id cannot be null or empty");
-    }
-
-    if (StringUtils.isBlank(newPasswordTrimmed)) {
-      throw new IllegalArgumentException("New password cannot be null or empty");
+    boolean isPasswordValid =
+        isPasswordValid(
+            passwordChangeRequest.getEmail(), passwordChangeRequest.getCurrentPassword());
+    if (!isPasswordValid) {
+      throw new ValidationException("Invalid current password");
     }
 
     UsersResource usersResource = realmResource.users();
-    UserResource userResource = usersResource.get(userIdTrimmed);
-    if (userResource == null) {
-      throw new IllegalArgumentException("User not found with ID: " + userId);
-    }
+    UserResource userResource = usersResource.get(passwordChangeRequest.getKeycloakId());
 
     UserRepresentation existingUser = userResource.toRepresentation();
-    existingUser.setCredentials(Collections.singletonList(buildUserCredential(newPasswordTrimmed)));
+    existingUser.setCredentials(
+        Collections.singletonList(buildUserCredential(passwordChangeRequest.getPassword())));
     userResource.update(existingUser);
+  }
+
+  private boolean isPasswordValid(String email, String password) {
+    try {
+      CredentialRequest credentialRequest = new CredentialRequest();
+      credentialRequest.setEmail(email);
+      credentialRequest.setPassword(password);
+
+      this.getAccessToken(credentialRequest);
+    } catch (UnauthorizedException e) {
+      return false;
+    }
+    return true;
   }
 
   private UserRepresentation buildUserRepresentation(UserRequest userRequest) {
