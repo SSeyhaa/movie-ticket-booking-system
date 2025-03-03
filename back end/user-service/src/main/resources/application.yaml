@@ -61,6 +61,19 @@ spring:
       idle-timeout: 300000 # close and remove idle connections that greater than {minimum-idle} in the pool
       max-lifetime: 1800000 # restart the connection after this duration
 
+
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: always
+      schema: classpath:sql/quartz.sql
+    properties:
+      org:
+        quartz:
+          jobStore:
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+
+
   # JPA configuration
   jpa:
     hibernate:

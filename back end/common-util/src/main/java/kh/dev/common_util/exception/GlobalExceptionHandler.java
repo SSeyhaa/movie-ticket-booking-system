@@ -27,6 +27,20 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
   }
 
+  @ExceptionHandler(SchedulerException.class)
+  public ResponseEntity<ErrorResponse> handleSchedulerException(
+      SchedulerException e, WebRequest request) {
+
+    ErrorResponse errorResponse =
+        buildErrorResponse(
+            HttpStatus.INTERNAL_SERVER_ERROR,
+            HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+            e.getMessage(),
+            request.getDescription(false),
+            e.getClass().getSimpleName());
+    return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
   private ErrorResponse buildErrorResponse(
       HttpStatus status, String error, String message, String path, String exceptionType) {
     return ErrorResponse.builder()
