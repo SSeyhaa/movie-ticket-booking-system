@@ -40,6 +40,11 @@ spring:
   application:
     name: ${USER_SERVICE_NAME}
 
+  threads:
+    virtual:
+      enabled: true
+
+
   # Security configuration
   security:
     oauth2:

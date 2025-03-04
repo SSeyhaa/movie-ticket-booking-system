@@ -30,6 +30,11 @@ spring:
   application:
     name: ${BOOKING_SERVICE_NAME}
 
+  threads:
+    virtual:
+      enabled: true
+
+
   # Database configuration
   datasource:
     url: jdbc:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/${BOOKING_SERVICE_DATABASE}
