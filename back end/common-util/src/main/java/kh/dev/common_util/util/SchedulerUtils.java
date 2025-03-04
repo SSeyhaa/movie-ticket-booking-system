@@ -53,7 +53,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class SchedulerUtils {
 
-  private Scheduler scheduler;
+  private final Scheduler scheduler;
 
   public JobDetail buildJobDetail(
       Class<? extends Job> jobClass,
@@ -70,7 +70,7 @@ public class SchedulerUtils {
 
       return JobBuilder.newJob(jobClass)
           .withIdentity(jobName, group)
-          .setJobData(dataMap)
+          .setJobData(dataMap != null ? dataMap : new JobDataMap())
           .withDescription(description)
           .build();
     } catch (SchedulerException e) {
@@ -94,7 +94,7 @@ public class SchedulerUtils {
           TriggerBuilder.newTrigger()
               .withIdentity(triggerName, group)
               .forJob(jobDetail.getKey())
-              .usingJobData(dataMap)
+              .usingJobData(dataMap != null ? dataMap : new JobDataMap())
               .startAt(startAt != null ? startAt : new Date())
               .withSchedule(scheduleBuilder)
               .endAt(endAt)
