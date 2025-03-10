@@ -2,6 +2,7 @@ package kh.dev.movie_service.exception;
 
 import java.time.LocalDateTime;
 import kh.dev.common_util.dto.response.ErrorResponse;
+import kh.dev.common_util.exception.ResourceAlreadyExistsException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +41,19 @@ public class GlobalExceptionHandler {
             e.getClass().getSimpleName());
 
     return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  @ExceptionHandler(ResourceAlreadyExistsException.class)
+  public ResponseEntity<ErrorResponse> handleResourceAlreadyExistsException(
+      ResourceAlreadyExistsException e, WebRequest request) {
+
+    ErrorResponse errorResponse =
+        buildErrorResponse(
+            HttpStatus.CONFLICT,
+            e.getMessage(),
+            request.getDescription(false),
+            e.getClass().getSimpleName());
+    return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
   }
 
   private ErrorResponse buildErrorResponse(

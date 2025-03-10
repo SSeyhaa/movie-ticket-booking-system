@@ -10,9 +10,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
-public class TheaterDto {
+public class TheaterSeatsDto {
 
-  private Long id;
-  private String name;
+  private Long theaterId;
   private Set<SeatDto> seats;
 }

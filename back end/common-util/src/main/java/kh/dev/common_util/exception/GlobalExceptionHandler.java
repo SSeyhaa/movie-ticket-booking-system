@@ -20,7 +20,6 @@ public class GlobalExceptionHandler {
     ErrorResponse errorResponse =
         buildErrorResponse(
             HttpStatus.FORBIDDEN,
-            "Access Denied",
             e.getMessage(),
             request.getDescription(false),
             e.getClass().getSimpleName());
@@ -34,7 +33,6 @@ public class GlobalExceptionHandler {
     ErrorResponse errorResponse =
         buildErrorResponse(
             HttpStatus.INTERNAL_SERVER_ERROR,
-            HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
             e.getMessage(),
             request.getDescription(false),
             e.getClass().getSimpleName());
@@ -42,10 +40,10 @@ public class GlobalExceptionHandler {
   }
 
   private ErrorResponse buildErrorResponse(
-      HttpStatus status, String error, String message, String path, String exceptionType) {
+      HttpStatus status, String message, String path, String exceptionType) {
     return ErrorResponse.builder()
         .status(status.value())
-        .error(error)
+        .error(status.getReasonPhrase())
         .message(message)
         .path(path)
         .exceptionType(exceptionType)

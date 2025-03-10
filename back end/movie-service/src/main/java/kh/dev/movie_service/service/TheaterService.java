@@ -1,6 +1,7 @@
 package kh.dev.movie_service.service;
 
 import java.util.List;
+import java.util.Optional;
 import kh.dev.common_util.dto.request.PaginationRequest;
 import kh.dev.movie_service.exception.ResourceNotFoundException;
 import kh.dev.movie_service.model.dto.TheaterDto;
@@ -31,7 +32,7 @@ public class TheaterService {
     return modelMapper.map(theaterRepository.save(theater), TheaterDto.class);
   }
 
-  private Theater findTheaterById(Long id) {
+  public Theater findTheaterById(Long id) {
     return theaterRepository
         .findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Theater not found with id: " + id));
@@ -44,11 +45,15 @@ public class TheaterService {
 
   public void deleteTheaterById(Long id) {
     Theater theater = findTheaterById(id);
+
+    Optional.ofNullable(theater.getCinema())
+        .ifPresent(cinema -> cinema.getTheaters().remove(theater));
+
     theaterRepository.delete(theater);
   }
 
-  public TheaterDto updateTheaterById(Long id, TheaterDto theaterDto) {
-    Theater theater = findTheaterById(id);
+  public TheaterDto updateTheaterById(TheaterDto theaterDto) {
+    Theater theater = findTheaterById(theaterDto.getId());
     theater.setName(theaterDto.getName());
     theaterRepository.save(theater);
     return modelMapper.map(theater, TheaterDto.class);

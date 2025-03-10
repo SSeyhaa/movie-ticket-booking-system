@@ -47,9 +47,8 @@ public class TheaterController {
     return ResponseEntity.noContent().build();
   }
 
-  @PutMapping("/{id}")
-  public ResponseEntity<TheaterDto> updateCinemaById(
-      @PathVariable Long id, @RequestBody TheaterDto theaterDto) {
-    return ResponseEntity.ok(theaterService.updateTheaterById(id, theaterDto));
+  @PutMapping
+  public ResponseEntity<TheaterDto> updateCinemaById(@RequestBody TheaterDto theaterDto) {
+    return ResponseEntity.ok(theaterService.updateTheaterById(theaterDto));
   }
 }
