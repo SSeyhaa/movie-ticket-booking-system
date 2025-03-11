@@ -3,7 +3,7 @@ package kh.dev.movie_service.repository.specification;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
-import kh.dev.movie_service.constant.SeatType;
+import kh.dev.common_util.constant.SeatType;
 import kh.dev.movie_service.model.entity.Seat;
 import kh.dev.movie_service.model.entity.Theater;
 import lombok.AccessLevel;

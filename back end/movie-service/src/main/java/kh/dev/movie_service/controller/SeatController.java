@@ -1,18 +1,20 @@
 package kh.dev.movie_service.controller;
 
+import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 import kh.dev.common_util.annotation.RoleRequired;
 import kh.dev.common_util.constant.SystemRole;
 import kh.dev.common_util.dto.request.PaginationRequest;
 import kh.dev.common_util.dto.response.Response;
-import kh.dev.movie_service.constant.SeatType;
-import kh.dev.movie_service.model.dto.SeatDto;
+import kh.dev.common_util.constant.SeatType;
+import kh.dev.common_util.dto.SeatDto;
 import kh.dev.movie_service.model.dto.TheaterSeatsDto;
 import kh.dev.movie_service.model.dto.response.PaginationResponse;
 import kh.dev.movie_service.service.SeatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,12 +25,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/v1/seats")
 @RequiredArgsConstructor
 public class SeatController {
 
+  private static final String SUCCESS = "success";
   private final SeatService seatService;
 
   @PostMapping
@@ -36,6 +40,22 @@ public class SeatController {
   public ResponseEntity<TheaterSeatsDto> createSeat(@RequestBody TheaterSeatsDto theaterSeatsDto) {
     return new ResponseEntity<>(
         seatService.createSeatByTheater(theaterSeatsDto), HttpStatus.CREATED);
+  }
+
+  @PostMapping(value = "/csv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @RoleRequired(required = SystemRole.SUPER_ADMIN)
+  public ResponseEntity<Response> createSeatCSV(
+      @RequestParam Long theaterId, @RequestParam(name = "file") MultipartFile file)
+      throws IOException {
+    seatService.importSeatCSV(theaterId, file.getInputStream());
+    return new ResponseEntity<>(
+        Response.builder()
+            .code(HttpStatus.CREATED.value())
+            .status(SUCCESS)
+            .message("Seats imported successfully")
+            .timestamp(ZonedDateTime.now())
+            .build(),
+        HttpStatus.CREATED);
   }
 
   @GetMapping
@@ -58,7 +78,7 @@ public class SeatController {
     return new ResponseEntity<>(
         Response.builder()
             .code(HttpStatus.NO_CONTENT.value())
-            .status("success")
+            .status(SUCCESS)
             .message("Seats updated successfully")
             .timestamp(ZonedDateTime.now())
             .build(),
@@ -73,7 +93,7 @@ public class SeatController {
     return new ResponseEntity<>(
         Response.builder()
             .code(HttpStatus.NO_CONTENT.value())
-            .status("success")
+            .status(SUCCESS)
             .message("Seats deleted successfully")
             .timestamp(ZonedDateTime.now())
             .build(),

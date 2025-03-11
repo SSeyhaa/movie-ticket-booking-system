@@ -1,15 +1,19 @@
 package kh.dev.movie_service.service;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import kh.dev.common_util.constant.SeatType;
+import kh.dev.common_util.dto.SeatDto;
 import kh.dev.common_util.dto.request.PaginationRequest;
 import kh.dev.common_util.exception.ResourceAlreadyExistsException;
+import kh.dev.common_util.file.csv.CSVService;
 import kh.dev.common_util.util.PaginationUtils;
-import kh.dev.movie_service.constant.SeatType;
-import kh.dev.movie_service.model.dto.SeatDto;
+import kh.dev.movie_service.file.SeatCSVRepresentation;
 import kh.dev.movie_service.model.dto.TheaterSeatsDto;
 import kh.dev.movie_service.model.dto.response.PaginationResponse;
 import kh.dev.movie_service.model.entity.Seat;
@@ -32,25 +36,33 @@ public class SeatService {
   private final ModelMapper modelMapper;
   private final SeatRepository seatRepository;
   private final TheaterService theaterService;
+  private final CSVService<SeatDto, SeatCSVRepresentation> csvService;
 
   public TheaterSeatsDto createSeatByTheater(TheaterSeatsDto theaterSeatsDto) {
 
-    Theater theater = theaterService.findTheaterById(theaterSeatsDto.getTheaterId());
-
-    validateSeatExists(theaterSeatsDto);
-
-    Set<Seat> seats = convertToSeat(theaterSeatsDto.getSeats());
-    seats.forEach(seat -> seat.setTheater(theater));
-
-    List<Seat> savedSeats = seatRepository.saveAll(seats);
-
+    List<Seat> savedSeats = saveSeats(theaterSeatsDto.getTheaterId(), theaterSeatsDto.getSeats());
     theaterSeatsDto.setSeats(new HashSet<>(convertToSeatDto(savedSeats)));
-
     return theaterSeatsDto;
   }
 
-  private void validateSeatExists(TheaterSeatsDto theaterSeatsDto) {
-    List<Seat> seatsExists = findByTheaterIdRowSeatNo(theaterSeatsDto);
+  private List<Seat> saveSeats(Long theaterId, Set<SeatDto> seatsDto) {
+    Theater theater = theaterService.findTheaterById(theaterId);
+
+    validateSeatExists(theaterId, seatsDto);
+
+    Set<Seat> seats = convertToSeat(seatsDto);
+    seats.forEach(seat -> seat.setTheater(theater));
+
+    return seatRepository.saveAll(seats);
+  }
+
+  public void importSeatCSV(Long theaterId, InputStream inputStream) throws IOException {
+    Set<SeatDto> seatsImported = csvService.parseCSV(inputStream, SeatCSVRepresentation.class);
+    saveSeats(theaterId, seatsImported);
+  }
+
+  private void validateSeatExists(Long theaterId, Set<SeatDto> seatsDto) {
+    List<Seat> seatsExists = findByTheaterIdRowSeatNo(theaterId, seatsDto);
     if (!seatsExists.isEmpty()) {
       List<String> seats =
           seatsExists.stream().map(seat -> seat.getRowLabel() + seat.getSeatNumber()).toList();
@@ -58,13 +70,12 @@ public class SeatService {
     }
   }
 
-  private List<Seat> findByTheaterIdRowSeatNo(TheaterSeatsDto theaterSeatsDto) {
-    Set<String> rowLabelSet =
-        theaterSeatsDto.getSeats().stream().map(SeatDto::getRowLabel).collect(Collectors.toSet());
+  private List<Seat> findByTheaterIdRowSeatNo(Long theaterId, Set<SeatDto> seats) {
+    Set<String> rowLabelSet = seats.stream().map(SeatDto::getRowLabel).collect(Collectors.toSet());
     Set<Integer> seatNumberSet =
-        theaterSeatsDto.getSeats().stream().map(SeatDto::getSeatNumber).collect(Collectors.toSet());
+        seats.stream().map(SeatDto::getSeatNumber).collect(Collectors.toSet());
     return seatRepository.findByTheaterIdAndRowLabelInAndSeatNumberIn(
-        theaterSeatsDto.getTheaterId(), rowLabelSet, seatNumberSet);
+        theaterId, rowLabelSet, seatNumberSet);
   }
 
   private Set<Seat> convertToSeat(Set<SeatDto> seatDto) {

@@ -1,10 +1,11 @@
-package kh.dev.movie_service.model.dto;
+package kh.dev.common_util.dto;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import kh.dev.movie_service.constant.SeatType;
+import kh.dev.common_util.constant.SeatType;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
+@Builder
 public class SeatDto {
 
   private Long id;

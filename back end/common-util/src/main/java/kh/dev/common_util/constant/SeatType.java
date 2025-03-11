@@ -1,4 +1,4 @@
-package kh.dev.movie_service.constant;
+package kh.dev.common_util.constant;
 
 public enum SeatType {
   STANDARD,
