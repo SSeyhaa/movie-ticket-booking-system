@@ -3,6 +3,7 @@ package kh.dev.movie_service.service;
 import java.util.List;
 import java.util.Optional;
 import kh.dev.common_util.dto.request.PaginationRequest;
+import kh.dev.common_util.util.PaginationUtils;
 import kh.dev.movie_service.exception.ResourceNotFoundException;
 import kh.dev.movie_service.model.dto.TheaterDto;
 import kh.dev.movie_service.model.dto.response.PaginationResponse;
@@ -12,9 +13,7 @@ import kh.dev.movie_service.repository.TheaterRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -60,13 +59,7 @@ public class TheaterService {
   }
 
   public PaginationResponse<TheaterDto> getTheaterWithPage(PaginationRequest paginationRequest) {
-    Pageable pageable =
-        PageRequest.of(
-            paginationRequest.getPageNumber() - 1,
-            paginationRequest.getPageSize(),
-            Sort.by(
-                Sort.Direction.fromString(paginationRequest.getSortDirection()),
-                paginationRequest.getSortBy()));
+    Pageable pageable = PaginationUtils.buildPageable(paginationRequest);
 
     Page<Theater> theaterPages = theaterRepository.findAll(pageable);
     return PaginationResponse.<TheaterDto>builder()

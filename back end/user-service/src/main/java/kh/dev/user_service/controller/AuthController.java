@@ -4,11 +4,14 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import java.time.ZonedDateTime;
+import kh.dev.common_util.dto.response.Response;
 import kh.dev.user_service.model.dto.request.CredentialRequest;
 import kh.dev.user_service.service.KeycloakService;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.representations.AccessTokenResponse;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,9 +49,15 @@ public class AuthController {
   }
 
   @PostMapping("/logout")
-  public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
+  public ResponseEntity<Response> logout(HttpServletRequest request, HttpServletResponse response) {
 
     keycloakService.logout(request, response);
-    return ResponseEntity.noContent().build();
+    return ResponseEntity.ok(
+        Response.builder()
+            .code(HttpStatus.OK.value())
+            .status("success")
+            .message("logout successfully")
+            .timestamp(ZonedDateTime.now())
+            .build());
   }
 }

@@ -18,6 +18,7 @@ public class NotificationService {
   public void send(NotificationRequest notification) {
     ExecutionContext context = new ExecutionContext();
     context.put(NotificationConstant.NOTIFICATION_REQUEST, notification);
+
     notificationProcessor.process(context);
   }
 }

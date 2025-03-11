@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.Optional;
 import kh.dev.common_util.dto.request.PaginationRequest;
 import kh.dev.common_util.util.DateTimeUtil;
+import kh.dev.common_util.util.PaginationUtils;
 import kh.dev.movie_service.exception.ResourceNotFoundException;
 import kh.dev.movie_service.model.dto.request.ShowTimeRequest;
 import kh.dev.movie_service.model.dto.response.PaginationResponse;
@@ -133,13 +134,7 @@ public class ShowTimeService {
       ZonedDateTime dateTime,
       Optional<String> movieTitle) {
 
-    Pageable pageable =
-        PageRequest.of(
-            paginationRequest.getPageNumber() - 1,
-            paginationRequest.getPageSize(),
-            Sort.by(
-                Sort.Direction.fromString(paginationRequest.getSortDirection()),
-                paginationRequest.getSortBy()));
+    Pageable pageable = PaginationUtils.buildPageable(paginationRequest);
 
     Specification<ShowTime> specification = Specification.allOf();
     if (cinema.isPresent()) {

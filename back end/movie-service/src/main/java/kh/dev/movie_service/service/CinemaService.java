@@ -3,6 +3,7 @@ package kh.dev.movie_service.service;
 import java.util.List;
 import java.util.Objects;
 import kh.dev.common_util.dto.request.PaginationRequest;
+import kh.dev.common_util.util.PaginationUtils;
 import kh.dev.movie_service.exception.ResourceNotFoundException;
 import kh.dev.movie_service.model.dto.CinemaDto;
 import kh.dev.movie_service.model.dto.response.PaginationResponse;
@@ -11,9 +12,7 @@ import kh.dev.movie_service.repository.CinemaRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -58,13 +57,7 @@ public class CinemaService {
   }
 
   public PaginationResponse<CinemaDto> getCinemaWithPage(PaginationRequest paginationRequest) {
-    Pageable pageable =
-        PageRequest.of(
-            paginationRequest.getPageNumber() - 1,
-            paginationRequest.getPageSize(),
-            Sort.by(
-                Sort.Direction.fromString(paginationRequest.getSortDirection()),
-                paginationRequest.getSortBy()));
+    Pageable pageable = PaginationUtils.buildPageable(paginationRequest);
 
     Page<Cinema> cinemaPages = cinemaRepository.findAll(pageable);
     return PaginationResponse.<CinemaDto>builder()
