@@ -10,7 +10,7 @@ import kh.dev.common_util.util.DateTimeUtil;
 import kh.dev.common_util.util.PaginationUtils;
 import kh.dev.movie_service.exception.ResourceNotFoundException;
 import kh.dev.movie_service.model.dto.request.ShowTimeRequest;
-import kh.dev.movie_service.model.dto.response.PaginationResponse;
+import kh.dev.common_util.dto.response.PaginationResponse;
 import kh.dev.movie_service.model.dto.response.ShowTimeResponse;
 import kh.dev.movie_service.model.entity.Cinema;
 import kh.dev.movie_service.model.entity.Movie;
@@ -20,9 +20,7 @@ import kh.dev.movie_service.repository.ShowTimeRepository;
 import kh.dev.movie_service.repository.specification.ShowTimeSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 

@@ -15,7 +15,7 @@ import kh.dev.common_util.file.csv.CSVService;
 import kh.dev.common_util.util.PaginationUtils;
 import kh.dev.movie_service.file.SeatCSVRepresentation;
 import kh.dev.movie_service.model.dto.TheaterSeatsDto;
-import kh.dev.movie_service.model.dto.response.PaginationResponse;
+import kh.dev.common_util.dto.response.PaginationResponse;
 import kh.dev.movie_service.model.entity.Seat;
 import kh.dev.movie_service.model.entity.Theater;
 import kh.dev.movie_service.repository.SeatRepository;

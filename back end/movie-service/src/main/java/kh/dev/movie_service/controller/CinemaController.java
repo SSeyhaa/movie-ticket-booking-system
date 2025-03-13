@@ -2,7 +2,7 @@ package kh.dev.movie_service.controller;
 
 import kh.dev.common_util.dto.request.PaginationRequest;
 import kh.dev.movie_service.model.dto.CinemaDto;
-import kh.dev.movie_service.model.dto.response.PaginationResponse;
+import kh.dev.common_util.dto.response.PaginationResponse;
 import kh.dev.movie_service.service.CinemaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -4,7 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.Optional;
 import kh.dev.common_util.dto.request.PaginationRequest;
 import kh.dev.movie_service.model.dto.request.ShowTimeRequest;
-import kh.dev.movie_service.model.dto.response.PaginationResponse;
+import kh.dev.common_util.dto.response.PaginationResponse;
 import kh.dev.movie_service.model.dto.response.ShowTimeResponse;
 import kh.dev.movie_service.service.ShowTimeService;
 import lombok.RequiredArgsConstructor;

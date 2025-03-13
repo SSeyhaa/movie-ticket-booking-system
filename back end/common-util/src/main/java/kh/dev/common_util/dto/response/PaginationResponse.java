@@ -1,4 +1,4 @@
-package kh.dev.movie_service.model.dto.response;
+package kh.dev.common_util.dto.response;
 
 import java.util.List;
 import lombok.AllArgsConstructor;

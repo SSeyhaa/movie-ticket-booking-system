@@ -10,7 +10,7 @@ import kh.dev.common_util.dto.response.Response;
 import kh.dev.common_util.constant.SeatType;
 import kh.dev.common_util.dto.SeatDto;
 import kh.dev.movie_service.model.dto.TheaterSeatsDto;
-import kh.dev.movie_service.model.dto.response.PaginationResponse;
+import kh.dev.common_util.dto.response.PaginationResponse;
 import kh.dev.movie_service.service.SeatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
