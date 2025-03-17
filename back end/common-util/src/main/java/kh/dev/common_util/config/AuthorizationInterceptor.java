@@ -1,76 +1,117 @@
 package kh.dev.common_util.config;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 import kh.dev.common_util.annotation.RoleRequired;
-import kh.dev.common_util.constant.SystemRole;
 import kh.dev.common_util.exception.AccessDeniedException;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
- * This class acts as an interceptor to enforce role-based access control using a custom annotation.
- * It leverages Spring AOP to intercept methods annotated with {@link RoleRequired} and validates
- * whether the currently authenticated user has the necessary roles to execute the method.
+ * Interceptor to enforce role-based authorization for HTTP requests.
  *
- * <p>The roles are checked against the user's granted authorities, and access is denied if the
- * required roles are not present.
+ * <p>This interceptor checks if a user is authenticated and has the required roles specified by the
+ * {@link RoleRequired} annotation on the handler method. If the user lacks the required roles, an
+ * {@link AccessDeniedException} is thrown.
  *
- * <p>Example usage:
+ * <p>This interceptor works by:
  *
- * <pre>{@code
- * @RoleRequired(required = {SystemRole.ADMIN, SystemRole.MANAGER})
- * public void someProtectedMethod() {
- *     // Method logic here
- * }
- * }</pre>
- *
- * @see RoleRequired
- * @see SystemRole
+ * <ol>
+ *   <li>Retrieving the current authentication from the {@link SecurityContextHolder}.
+ *   <li>Checking if the user is authenticated and has assigned roles.
+ *   <li>Extracting the required roles from the {@link RoleRequired} annotation.
+ *   <li>Comparing the user's roles against the required roles.
+ *   <li>Allowing access if at least one required role matches the user's roles.
+ *   <li>Logging unauthorized access attempts and throwing an {@link AccessDeniedException} if
+ *       access is denied.
+ * </ol>
  */
-@Aspect
 @Component
-public class AuthorizationInterceptor {
+@Slf4j
+public class AuthorizationInterceptor implements HandlerInterceptor {
 
   private static final String ROLE_PREFIX = "ROLE_";
 
   /**
-   * Intercepts methods annotated with {@link RoleRequired} and validates the user's roles.
+   * Intercepts incoming HTTP requests to perform authorization checks.
    *
-   * <p>This method retrieves the currently authenticated user and checks whether they possess any
-   * of the roles specified in the {@link RoleRequired#required()} annotation. If the user is not
-   * authenticated or does not have the necessary roles, an {@link AccessDeniedException} is thrown.
-   *
-   * @param roleRequired the {@link RoleRequired} annotation applied to the method, which specifies
-   *     the roles required to execute the method.
-   * @throws AccessDeniedException if the user is not authenticated or does not have the required
-   *     roles.
+   * @param request The {@link HttpServletRequest} containing client request data.
+   * @param response The {@link HttpServletResponse} for sending responses to the client.
+   * @param handler The handler (controller method) that is being accessed.
+   * @return {@code true} if the request is authorized; {@code false} otherwise.
+   * @throws AccessDeniedException if the user is not authenticated or lacks required roles.
    */
-  @Before("@annotation(roleRequired)")
-  public void authorize(RoleRequired roleRequired) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+  @Override
+  public boolean preHandle(
+      @NonNull HttpServletRequest request,
+      @NonNull HttpServletResponse response,
+      @NonNull Object handler) {
 
+    Authentication authentication = getAuthenticatedUser();
+    validateUserRoles(authentication);
+
+    if (handler instanceof HandlerMethod handlerMethod) {
+
+      RoleRequired roleRequired = handlerMethod.getMethodAnnotation(RoleRequired.class);
+      if (roleRequired == null) {
+        return true;
+      }
+
+      if (hasRequiredRole(authentication, roleRequired)) {
+        return true;
+      }
+
+      String requiredRolesString = getRequiredRolesString(roleRequired);
+      logUnauthorizedAccess(authentication, requiredRolesString);
+      throw new AccessDeniedException(
+          "Access denied for the required roles: " + requiredRolesString);
+    }
+
+    return false;
+  }
+
+  private Authentication getAuthenticatedUser() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication == null || !authentication.isAuthenticated()) {
       throw new AccessDeniedException("User is not authenticated");
     }
+    return authentication;
+  }
 
-    boolean hasRole = false;
-    for (SystemRole role : roleRequired.required()) {
-      if (authentication
-          .getAuthorities()
-          .contains(new SimpleGrantedAuthority(ROLE_PREFIX.concat(role.toString())))) {
-        hasRole = true;
-        break;
-      }
+  private void validateUserRoles(Authentication authentication) {
+    if (authentication.getAuthorities() == null || authentication.getAuthorities().isEmpty()) {
+      throw new AccessDeniedException("User has no assigned roles");
     }
+  }
 
-    if (!hasRole) {
-      throw new AccessDeniedException(
-          "Access denied for the required roles: "
-              + String.join(", ", Arrays.toString(roleRequired.required())));
-    }
+  private boolean hasRequiredRole(Authentication authentication, RoleRequired roleRequired) {
+    Set<String> userRoles =
+        authentication.getAuthorities().stream()
+            .map(GrantedAuthority::getAuthority)
+            .collect(Collectors.toSet());
+
+    return Arrays.stream(roleRequired.required())
+        .map(role -> ROLE_PREFIX + role.name())
+        .anyMatch(userRoles::contains);
+  }
+
+  private void logUnauthorizedAccess(Authentication authentication, String requiredRolesString) {
+    log.warn(
+        "Unauthorized access attempt: user={}, requiredRoles={}",
+        authentication.getName(),
+        requiredRolesString);
+  }
+
+  private String getRequiredRolesString(RoleRequired roleRequired) {
+    return Arrays.stream(roleRequired.required()).map(Enum::name).collect(Collectors.joining(", "));
   }
 }

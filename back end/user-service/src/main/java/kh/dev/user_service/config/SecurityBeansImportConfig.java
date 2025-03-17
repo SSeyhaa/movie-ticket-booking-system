@@ -4,6 +4,7 @@ import kh.dev.common_util.config.AuthorizationInterceptor;
 import kh.dev.common_util.config.CorsConfig;
 import kh.dev.common_util.config.CustomAuthenticationEntryPoint;
 import kh.dev.common_util.config.JwtConverter;
+import kh.dev.common_util.config.WebConfig;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
@@ -12,6 +13,7 @@ import org.springframework.context.annotation.Import;
   CorsConfig.class,
   JwtConverter.class,
   AuthorizationInterceptor.class,
+  WebConfig.class,
   CustomAuthenticationEntryPoint.class
 })
 public class SecurityBeansImportConfig {}
