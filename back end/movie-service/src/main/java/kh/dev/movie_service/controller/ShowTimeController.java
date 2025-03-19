@@ -3,8 +3,8 @@ package kh.dev.movie_service.controller;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 import kh.dev.common_util.dto.request.PaginationRequest;
-import kh.dev.movie_service.model.dto.request.ShowTimeRequest;
 import kh.dev.common_util.dto.response.PaginationResponse;
+import kh.dev.movie_service.model.dto.request.ShowTimeRequest;
 import kh.dev.movie_service.model.dto.response.ShowTimeResponse;
 import kh.dev.movie_service.service.ShowTimeService;
 import lombok.RequiredArgsConstructor;
@@ -40,15 +40,16 @@ public class ShowTimeController {
   }
 
   @GetMapping
-  public ResponseEntity<PaginationResponse<ShowTimeResponse>> getSHowTimes(
+  public ResponseEntity<PaginationResponse<ShowTimeResponse>> getShowTimes(
       @ModelAttribute PaginationRequest paginationRequest,
       @RequestParam Optional<String> cinema,
       @RequestParam Optional<String> theater,
-      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateTime,
-      @RequestParam Optional<String> movieTitle) {
+      @RequestParam Optional<String> movieTitle,
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+          Optional<ZonedDateTime> dateTime) {
     return ResponseEntity.ok(
         showTimeService.getShowTimesWithFilters(
-            paginationRequest, cinema, theater, dateTime, movieTitle));
+            paginationRequest, cinema, theater, movieTitle, dateTime));
   }
 
   @DeleteMapping("/{id}")

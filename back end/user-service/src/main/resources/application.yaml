@@ -121,3 +121,6 @@ app:
     first-name-super-admin: ${KEYCLOAK_FIRST_NAME_SUPER_ADMIN}
     last-name-super-admin: ${KEYCLOAK_LAST_NAME_SUPER_ADMIN}
 
+  storage:
+    file:
+      profile-picture: "C:\\storage\\profile-picture"

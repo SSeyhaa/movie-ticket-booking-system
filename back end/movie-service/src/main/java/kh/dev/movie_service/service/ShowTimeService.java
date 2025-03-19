@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import kh.dev.common_util.dto.request.PaginationRequest;
+import kh.dev.common_util.dto.response.PaginationResponse;
 import kh.dev.common_util.util.DateTimeUtil;
 import kh.dev.common_util.util.PaginationUtils;
 import kh.dev.movie_service.exception.ResourceNotFoundException;
 import kh.dev.movie_service.model.dto.request.ShowTimeRequest;
-import kh.dev.common_util.dto.response.PaginationResponse;
 import kh.dev.movie_service.model.dto.response.ShowTimeResponse;
 import kh.dev.movie_service.model.entity.Cinema;
 import kh.dev.movie_service.model.entity.Movie;
@@ -129,8 +129,8 @@ public class ShowTimeService {
       PaginationRequest paginationRequest,
       Optional<String> cinema,
       Optional<String> theater,
-      ZonedDateTime dateTime,
-      Optional<String> movieTitle) {
+      Optional<String> movieTitle,
+      Optional<ZonedDateTime> dateTime) {
 
     Pageable pageable = PaginationUtils.buildPageable(paginationRequest);
 
@@ -143,8 +143,8 @@ public class ShowTimeService {
       specification = specification.and(ShowTimeSpecification.hasTheater(theater.get()));
     }
 
-    if (Objects.nonNull(dateTime)) {
-      LocalDateTime dateTimeLocal = dateTime.toLocalDateTime();
+    if (dateTime.isPresent()) {
+      LocalDateTime dateTimeLocal = dateTime.get().toLocalDateTime();
 
       if (DateTimeUtil.isDateExcludeTime(dateTimeLocal)) {
         specification =

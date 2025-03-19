@@ -2,6 +2,9 @@ package kh.dev.user_service.service;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Optional;
 import java.util.Set;
 import kh.dev.common_util.config.CustomJwtAuthenticationToken;
@@ -12,6 +15,7 @@ import kh.dev.common_util.constant.UserConstants;
 import kh.dev.common_util.dto.request.NotificationRequest;
 import kh.dev.common_util.util.CurrentUserUtils;
 import kh.dev.common_util.util.ExecutionContext;
+import kh.dev.common_util.util.FileUtils;
 import kh.dev.user_service.exception.ResourceNotFoundException;
 import kh.dev.user_service.exception.UserAlreadyExistsException;
 import kh.dev.user_service.exception.UserCreationException;
@@ -27,9 +31,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +46,14 @@ public class UserService {
   private final UserRepository userRepository;
   private final KeycloakService keycloakService;
   private final RoleRepository roleRepository;
+
+  @Value("${app.storage.file.profile-picture}")
+  private String profilePictureStorage;
+
+  public String uploadProfilePicture(MultipartFile file) throws IOException {
+    Files.createDirectories(Path.of(profilePictureStorage));
+    return FileUtils.saveImage(profilePictureStorage, file);
+  }
 
   public UserResponse create(UserRequest userRequest) {
 

@@ -16,5 +16,6 @@ public class Response {
   private int code;
   private String status;
   private String message;
+  private String body;
   private ZonedDateTime timestamp;
 }
