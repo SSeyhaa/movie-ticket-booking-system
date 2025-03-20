@@ -11,6 +11,7 @@ import jakarta.persistence.Table;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import kh.dev.common_util.config.Auditable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,7 +25,7 @@ import lombok.experimental.FieldNameConstants;
 @Setter
 @Getter
 @FieldNameConstants
-public class Movie {
+public class Movie extends Auditable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import kh.dev.common_util.config.Auditable;
 import kh.dev.common_util.constant.SeatType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,7 +27,7 @@ import lombok.experimental.FieldNameConstants;
 @NoArgsConstructor
 @Setter
 @Getter
-public class Seat {
+public class Seat extends Auditable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

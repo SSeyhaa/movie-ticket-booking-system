@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
+import kh.dev.common_util.config.Auditable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +20,7 @@ import lombok.experimental.FieldNameConstants;
 @Setter
 @Getter
 @FieldNameConstants
-public class ShowTime {
+public class ShowTime extends Auditable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

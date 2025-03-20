@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import java.util.List;
+import kh.dev.common_util.config.Auditable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +22,7 @@ import lombok.experimental.FieldNameConstants;
 @NoArgsConstructor
 @Setter
 @Getter
-public class Cinema {
+public class Cinema extends Auditable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
