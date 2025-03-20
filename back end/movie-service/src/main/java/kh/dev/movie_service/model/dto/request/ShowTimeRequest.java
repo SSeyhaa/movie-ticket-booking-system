@@ -14,5 +14,6 @@ public class ShowTimeRequest {
   private Long cinemaId;
   private Long theaterId;
   private Long movieId;
-  private ZonedDateTime dateTime;
+  private ZonedDateTime startTime;
+  private ZonedDateTime endTime;
 }

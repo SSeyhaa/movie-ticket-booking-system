@@ -25,7 +25,9 @@ public class ShowTime {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private ZonedDateTime dateTime;
+  private ZonedDateTime startTime;
+
+  private ZonedDateTime endTime;
 
   @ManyToOne
   @NotNull(message = "please add the cinema for the show time")

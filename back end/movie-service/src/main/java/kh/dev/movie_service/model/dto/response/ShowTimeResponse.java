@@ -17,6 +17,7 @@ public class ShowTimeResponse {
   private Long id;
   private String cinema;
   private String theater;
-  private ZonedDateTime dateTime;
   private String movieTitle;
+  private ZonedDateTime startTime;
+  private ZonedDateTime endTime;
 }

@@ -45,7 +45,9 @@ public class ShowTimeService {
 
     Movie movie = movieService.findMovieById(showTimeRequest.getMovieId());
 
-    ShowTime showTime = buildShowTime(cinema, theater, movie, showTimeRequest.getDateTime());
+    ShowTime showTime =
+        buildShowTime(
+            cinema, theater, movie, showTimeRequest.getStartTime(), showTimeRequest.getEndTime());
 
     ShowTime showTimeSaved = showTimeRepository.save(showTime);
 
@@ -57,7 +59,8 @@ public class ShowTimeService {
         .id(showTime.getId())
         .cinema(showTime.getCinema().getName())
         .theater(showTime.getTheater().getName())
-        .dateTime(showTime.getDateTime())
+        .startTime(showTime.getStartTime())
+        .endTime(showTime.getEndTime())
         .movieTitle(showTime.getMovie().getTitle())
         .build();
   }
@@ -70,19 +73,21 @@ public class ShowTimeService {
                     .id(showTime.getId())
                     .cinema(showTime.getCinema().getName())
                     .theater(showTime.getTheater().getName())
-                    .dateTime(showTime.getDateTime())
+                    .startTime(showTime.getStartTime())
+                    .endTime(showTime.getEndTime())
                     .movieTitle(showTime.getMovie().getTitle())
                     .build())
         .toList();
   }
 
   private ShowTime buildShowTime(
-      Cinema cinema, Theater theater, Movie movie, ZonedDateTime dateTime) {
+      Cinema cinema, Theater theater, Movie movie, ZonedDateTime startTime, ZonedDateTime endTime) {
     ShowTime showTime = new ShowTime();
     showTime.setCinema(cinema);
     showTime.setTheater(theater);
     showTime.setMovie(movie);
-    showTime.setDateTime(dateTime);
+    showTime.setStartTime(startTime);
+    showTime.setEndTime(endTime);
     return showTime;
   }
 
@@ -120,7 +125,8 @@ public class ShowTimeService {
     showTime.setCinema(cinema);
     showTime.setTheater(theater);
     showTime.setMovie(movie);
-    showTime.setDateTime(showTimeRequest.getDateTime());
+    showTime.setStartTime(showTimeRequest.getStartTime());
+    showTime.setEndTime(showTimeRequest.getEndTime());
     ShowTime showTimeUpdated = showTimeRepository.save(showTime);
     return buildShowTimeResponse(showTimeUpdated);
   }

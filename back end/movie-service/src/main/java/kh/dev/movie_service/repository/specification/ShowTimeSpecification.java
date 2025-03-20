@@ -1,15 +1,15 @@
 package kh.dev.movie_service.repository.specification;
 
-import kh.dev.movie_service.model.entity.Cinema;
-import kh.dev.movie_service.model.entity.Movie;
-import kh.dev.movie_service.model.entity.ShowTime;
-import kh.dev.movie_service.model.entity.Theater;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import kh.dev.movie_service.model.entity.Cinema;
+import kh.dev.movie_service.model.entity.Movie;
+import kh.dev.movie_service.model.entity.ShowTime;
+import kh.dev.movie_service.model.entity.Theater;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
@@ -45,7 +45,7 @@ public class ShowTimeSpecification {
       // End of the day (23:59:59.999999999)
       LocalDateTime endOfDay = dateTime.atTime(LocalTime.MAX);
       // checks if the dateTime is between the start and end of the day
-      return cb.between(root.get(ShowTime.Fields.dateTime), startOfDay, endOfDay);
+      return cb.between(root.get(ShowTime.Fields.startTime), startOfDay, endOfDay);
     };
   }
 
@@ -53,7 +53,7 @@ public class ShowTimeSpecification {
     return (Root<ShowTime> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
       LocalDate endOfDayDate = dateTime.toLocalDate();
       LocalDateTime endOfDay = endOfDayDate.atTime(LocalTime.MAX);
-      return cb.between(root.get(ShowTime.Fields.dateTime), dateTime, endOfDay);
+      return cb.between(root.get(ShowTime.Fields.startTime), dateTime, endOfDay);
     };
   }
 }
