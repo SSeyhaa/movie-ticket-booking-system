@@ -2,6 +2,7 @@ package kh.dev.movie_service.service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import kh.dev.movie_service.exception.ResourceNotFoundException;
 import kh.dev.movie_service.model.dto.TimeSlot;
 import kh.dev.movie_service.model.dto.request.ShowTimeSlotRequest;
@@ -66,6 +67,16 @@ public class ShowTimeSlotService {
         .showTime(buildShowTimeResponse(showTimeSlotFirst))
         .timeSlot(timeSlots)
         .build();
+  }
+
+  public void deleteShowTimeSlots(Set<Long> showTimeSlotIds) {
+    showTimeSlotRepository.deleteAllById(showTimeSlotIds);
+  }
+
+  private ShowTimeSlot findShowTimeSlotById(Long showTimeSlotId) {
+    return showTimeSlotRepository
+        .findById(showTimeSlotId)
+        .orElseThrow(() -> new ResourceNotFoundException("ShowTimeSlot not found"));
   }
 
   private TimeSlot mapToTimeSlot(ShowTimeSlot showTimeSlot) {
