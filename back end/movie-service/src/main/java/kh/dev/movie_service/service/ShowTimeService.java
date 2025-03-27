@@ -75,7 +75,7 @@ public class ShowTimeService {
     showTimeRepository.delete(showTime);
   }
 
-  private ShowTime findShowTimeById(Long id) {
+  public ShowTime findShowTimeById(Long id) {
     return showTimeRepository
         .findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Show Time not found with id: " + id));

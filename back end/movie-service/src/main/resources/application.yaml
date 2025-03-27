@@ -36,6 +36,7 @@ springdoc:
 
 
 spring:
+  # Application configuration
   application:
     name: ${MOVIE_SERVICE_NAME}
 

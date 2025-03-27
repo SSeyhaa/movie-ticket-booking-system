@@ -1,11 +1,14 @@
 package kh.dev.movie_service.exception;
 
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 import kh.dev.common_util.dto.response.ErrorResponse;
 import kh.dev.common_util.exception.ResourceAlreadyExistsException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -54,6 +57,34 @@ public class GlobalExceptionHandler {
             request.getDescription(false),
             e.getClass().getSimpleName());
     return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+  }
+
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
+      MethodArgumentNotValidException e, WebRequest request) {
+    String errorMessages = extractValidationErrors(e);
+    log.error("Validation error: {}", errorMessages, e);
+
+    ErrorResponse errorResponse =
+        buildErrorResponse(
+            HttpStatus.BAD_REQUEST,
+            errorMessages,
+            request.getDescription(false),
+            e.getClass().getSimpleName());
+    return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+  }
+
+  private String extractValidationErrors(MethodArgumentNotValidException e) {
+    return e.getBindingResult().getAllErrors().stream()
+        .map(
+            error -> {
+              if (error instanceof FieldError fieldError) {
+                return fieldError.getField() + ": " + fieldError.getDefaultMessage();
+              } else {
+                return error.getDefaultMessage();
+              }
+            })
+        .collect(Collectors.joining(", "));
   }
 
   private ErrorResponse buildErrorResponse(

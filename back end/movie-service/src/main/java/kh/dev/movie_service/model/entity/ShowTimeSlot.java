@@ -7,6 +7,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalTime;
 import kh.dev.common_util.config.Auditable;
@@ -17,6 +19,10 @@ import lombok.Setter;
 import lombok.experimental.FieldNameConstants;
 
 @Entity
+@Table(
+    uniqueConstraints =
+        @UniqueConstraint(
+            columnNames = {"cinema_id", "theater_id", "showtime_id", "start_time", "end_time"}))
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
