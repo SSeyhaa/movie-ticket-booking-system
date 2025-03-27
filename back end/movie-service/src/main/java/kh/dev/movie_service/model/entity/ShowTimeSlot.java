@@ -1,16 +1,14 @@
 package kh.dev.movie_service.model.entity;
 
-import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalTime;
 import kh.dev.common_util.config.Auditable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,18 +22,29 @@ import lombok.experimental.FieldNameConstants;
 @Setter
 @Getter
 @FieldNameConstants
-public class ShowTime extends Auditable {
+public class ShowTimeSlot extends Auditable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private ZonedDateTime date;
+  @NotNull(message = "Start time is required")
+  @Column(nullable = false)
+  private LocalTime startTime;
+
+  @NotNull(message = "End time is required")
+  @Column(nullable = false)
+  private LocalTime endTime;
 
   @ManyToOne(optional = false)
-  @NotNull(message = "please add the movie for the show time")
-  private Movie movie;
+  @NotNull(message = "Cinema is required")
+  private Cinema cinema;
 
-  @OneToMany(mappedBy = "showTime", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<ShowTimeSlot> showTimeSlots = new ArrayList<>();
+  @ManyToOne(optional = false)
+  @NotNull(message = "Theater is required")
+  private Theater theater;
+
+  @ManyToOne(optional = false)
+  @JoinColumn(name = "showtime_id", nullable = false)
+  private ShowTime showTime;
 }

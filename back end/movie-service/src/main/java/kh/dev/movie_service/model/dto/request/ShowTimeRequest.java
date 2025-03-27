@@ -11,9 +11,6 @@ import lombok.Setter;
 @Setter
 @Getter
 public class ShowTimeRequest {
-  private Long cinemaId;
-  private Long theaterId;
   private Long movieId;
-  private ZonedDateTime startTime;
-  private ZonedDateTime endTime;
+  private ZonedDateTime date;
 }

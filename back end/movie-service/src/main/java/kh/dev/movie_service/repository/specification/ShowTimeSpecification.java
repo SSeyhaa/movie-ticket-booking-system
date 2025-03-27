@@ -6,10 +6,8 @@ import jakarta.persistence.criteria.Root;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import kh.dev.movie_service.model.entity.Cinema;
 import kh.dev.movie_service.model.entity.Movie;
 import kh.dev.movie_service.model.entity.ShowTime;
-import kh.dev.movie_service.model.entity.Theater;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
@@ -24,19 +22,19 @@ public class ShowTimeSpecification {
             "%" + title.toLowerCase() + "%");
   }
 
-  public static Specification<ShowTime> hasCinema(String cinema) {
-    return (Root<ShowTime> root, CriteriaQuery<?> query, CriteriaBuilder cb) ->
-        cb.like(
-            cb.lower(root.get(ShowTime.Fields.cinema).get(Cinema.Fields.name)),
-            "%" + cinema.toLowerCase() + "%");
-  }
+  //  public static Specification<ShowTime> hasCinema(String cinema) {
+  //    return (Root<ShowTime> root, CriteriaQuery<?> query, CriteriaBuilder cb) ->
+  //        cb.like(
+  //            cb.lower(root.get(ShowTime.Fields.cinema).get(Cinema.Fields.name)),
+  //            "%" + cinema.toLowerCase() + "%");
+  //  }
 
-  public static Specification<ShowTime> hasTheater(String theater) {
-    return (Root<ShowTime> root, CriteriaQuery<?> query, CriteriaBuilder cb) ->
-        cb.like(
-            cb.lower(root.get(ShowTime.Fields.theater).get(Theater.Fields.name)),
-            "%" + theater.toLowerCase() + "%");
-  }
+  //  public static Specification<ShowTime> hasTheater(String theater) {
+  //    return (Root<ShowTime> root, CriteriaQuery<?> query, CriteriaBuilder cb) ->
+  //        cb.like(
+  //            cb.lower(root.get(ShowTime.Fields.theater).get(Theater.Fields.name)),
+  //            "%" + theater.toLowerCase() + "%");
+  //  }
 
   public static Specification<ShowTime> hasDate(LocalDate dateTime) {
     return (Root<ShowTime> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
@@ -45,7 +43,7 @@ public class ShowTimeSpecification {
       // End of the day (23:59:59.999999999)
       LocalDateTime endOfDay = dateTime.atTime(LocalTime.MAX);
       // checks if the dateTime is between the start and end of the day
-      return cb.between(root.get(ShowTime.Fields.startTime), startOfDay, endOfDay);
+      return cb.between(root.get(ShowTime.Fields.date), startOfDay, endOfDay);
     };
   }
 
@@ -53,7 +51,7 @@ public class ShowTimeSpecification {
     return (Root<ShowTime> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
       LocalDate endOfDayDate = dateTime.toLocalDate();
       LocalDateTime endOfDay = endOfDayDate.atTime(LocalTime.MAX);
-      return cb.between(root.get(ShowTime.Fields.startTime), dateTime, endOfDay);
+      return cb.between(root.get(ShowTime.Fields.date), dateTime, endOfDay);
     };
   }
 }

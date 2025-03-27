@@ -15,9 +15,6 @@ import lombok.Setter;
 public class ShowTimeResponse {
 
   private Long id;
-  private String cinema;
-  private String theater;
   private String movieTitle;
-  private ZonedDateTime startTime;
-  private ZonedDateTime endTime;
+  private ZonedDateTime date;
 }

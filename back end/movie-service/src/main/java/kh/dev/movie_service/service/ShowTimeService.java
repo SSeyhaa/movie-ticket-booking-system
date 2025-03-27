@@ -3,7 +3,6 @@ package kh.dev.movie_service.service;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import kh.dev.common_util.dto.request.PaginationRequest;
 import kh.dev.common_util.dto.response.PaginationResponse;
@@ -12,10 +11,8 @@ import kh.dev.common_util.util.PaginationUtils;
 import kh.dev.movie_service.exception.ResourceNotFoundException;
 import kh.dev.movie_service.model.dto.request.ShowTimeRequest;
 import kh.dev.movie_service.model.dto.response.ShowTimeResponse;
-import kh.dev.movie_service.model.entity.Cinema;
 import kh.dev.movie_service.model.entity.Movie;
 import kh.dev.movie_service.model.entity.ShowTime;
-import kh.dev.movie_service.model.entity.Theater;
 import kh.dev.movie_service.repository.ShowTimeRepository;
 import kh.dev.movie_service.repository.specification.ShowTimeSpecification;
 import lombok.RequiredArgsConstructor;
@@ -27,27 +24,14 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class ShowTimeService {
-  private final CinemaService cinemaService;
   private final MovieService movieService;
   private final ShowTimeRepository showTimeRepository;
 
   public ShowTimeResponse createShowTime(ShowTimeRequest showTimeRequest) {
-    Cinema cinema = cinemaService.findCinemaById(showTimeRequest.getCinemaId());
-
-    Theater theater =
-        cinema.getTheaters().stream()
-            .filter(th -> Objects.equals(th.getId(), showTimeRequest.getTheaterId()))
-            .findFirst()
-            .orElseThrow(
-                () ->
-                    new ResourceNotFoundException(
-                        "Theater not found with id: " + showTimeRequest.getTheaterId()));
 
     Movie movie = movieService.findMovieById(showTimeRequest.getMovieId());
 
-    ShowTime showTime =
-        buildShowTime(
-            cinema, theater, movie, showTimeRequest.getStartTime(), showTimeRequest.getEndTime());
+    ShowTime showTime = buildShowTime(movie, showTimeRequest.getDate());
 
     ShowTime showTimeSaved = showTimeRepository.save(showTime);
 
@@ -57,10 +41,7 @@ public class ShowTimeService {
   private ShowTimeResponse buildShowTimeResponse(ShowTime showTime) {
     return ShowTimeResponse.builder()
         .id(showTime.getId())
-        .cinema(showTime.getCinema().getName())
-        .theater(showTime.getTheater().getName())
-        .startTime(showTime.getStartTime())
-        .endTime(showTime.getEndTime())
+        .date(showTime.getDate())
         .movieTitle(showTime.getMovie().getTitle())
         .build();
   }
@@ -71,23 +52,16 @@ public class ShowTimeService {
             showTime ->
                 ShowTimeResponse.builder()
                     .id(showTime.getId())
-                    .cinema(showTime.getCinema().getName())
-                    .theater(showTime.getTheater().getName())
-                    .startTime(showTime.getStartTime())
-                    .endTime(showTime.getEndTime())
+                    .date(showTime.getDate())
                     .movieTitle(showTime.getMovie().getTitle())
                     .build())
         .toList();
   }
 
-  private ShowTime buildShowTime(
-      Cinema cinema, Theater theater, Movie movie, ZonedDateTime startTime, ZonedDateTime endTime) {
+  private ShowTime buildShowTime(Movie movie, ZonedDateTime startTime) {
     ShowTime showTime = new ShowTime();
-    showTime.setCinema(cinema);
-    showTime.setTheater(theater);
     showTime.setMovie(movie);
-    showTime.setStartTime(startTime);
-    showTime.setEndTime(endTime);
+    showTime.setDate(startTime);
     return showTime;
   }
 
@@ -111,26 +85,13 @@ public class ShowTimeService {
     Movie movie = movieService.findMovieById(showTimeRequest.getMovieId());
     ShowTime showTime = findShowTimeById(id);
 
-    Cinema cinema = cinemaService.findCinemaById(showTimeRequest.getCinemaId());
-
-    Theater theater =
-        cinema.getTheaters().stream()
-            .filter(th -> Objects.equals(th.getId(), showTimeRequest.getTheaterId()))
-            .findFirst()
-            .orElseThrow(
-                () ->
-                    new ResourceNotFoundException(
-                        "Theater not found with id: " + showTimeRequest.getTheaterId()));
-
-    showTime.setCinema(cinema);
-    showTime.setTheater(theater);
     showTime.setMovie(movie);
-    showTime.setStartTime(showTimeRequest.getStartTime());
-    showTime.setEndTime(showTimeRequest.getEndTime());
+    showTime.setDate(showTimeRequest.getDate());
     ShowTime showTimeUpdated = showTimeRepository.save(showTime);
     return buildShowTimeResponse(showTimeUpdated);
   }
 
+  // todo: implement filter by cinema and theater
   public PaginationResponse<ShowTimeResponse> getShowTimesWithFilters(
       PaginationRequest paginationRequest,
       Optional<String> cinema,
@@ -141,13 +102,6 @@ public class ShowTimeService {
     Pageable pageable = PaginationUtils.buildPageable(paginationRequest);
 
     Specification<ShowTime> specification = Specification.allOf();
-    if (cinema.isPresent()) {
-      specification = specification.and(ShowTimeSpecification.hasCinema(cinema.get()));
-    }
-
-    if (theater.isPresent()) {
-      specification = specification.and(ShowTimeSpecification.hasTheater(theater.get()));
-    }
 
     if (dateTime.isPresent()) {
       LocalDateTime dateTimeLocal = dateTime.get().toLocalDateTime();
