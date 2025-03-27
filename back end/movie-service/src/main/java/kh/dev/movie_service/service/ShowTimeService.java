@@ -2,6 +2,7 @@ package kh.dev.movie_service.service;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import kh.dev.common_util.dto.request.PaginationRequest;
@@ -58,10 +59,10 @@ public class ShowTimeService {
         .toList();
   }
 
-  private ShowTime buildShowTime(Movie movie, ZonedDateTime startTime) {
+  private ShowTime buildShowTime(Movie movie, ZonedDateTime date) {
     ShowTime showTime = new ShowTime();
     showTime.setMovie(movie);
-    showTime.setDate(startTime);
+    showTime.setDate(date.truncatedTo(ChronoUnit.DAYS));
     return showTime;
   }
 

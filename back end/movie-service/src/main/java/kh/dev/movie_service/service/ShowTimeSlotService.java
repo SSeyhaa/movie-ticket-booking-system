@@ -1,9 +1,12 @@
 package kh.dev.movie_service.service;
 
+import java.util.List;
 import java.util.Objects;
 import kh.dev.movie_service.exception.ResourceNotFoundException;
+import kh.dev.movie_service.model.dto.TimeSlot;
 import kh.dev.movie_service.model.dto.request.ShowTimeSlotRequest;
 import kh.dev.movie_service.model.dto.response.ShowTimeResponse;
+import kh.dev.movie_service.model.dto.response.ShowTimeSlotList;
 import kh.dev.movie_service.model.dto.response.ShowTimeSlotResponse;
 import kh.dev.movie_service.model.entity.Cinema;
 import kh.dev.movie_service.model.entity.ShowTime;
@@ -44,6 +47,32 @@ public class ShowTimeSlotService {
     return buildShowTimeSlotResponse(showTimeSlotSaved);
   }
 
+  public ShowTimeSlotList getShowTimeSlots(Long cinemaId, Long theaterId, Long showTimeId) {
+
+    List<ShowTimeSlot> showTimeSlots =
+        showTimeSlotRepository.findAllByCinemaIdAndTheaterIdAndShowTimeId(
+            cinemaId, theaterId, showTimeId);
+
+    if (showTimeSlots.isEmpty()) {
+      return new ShowTimeSlotList();
+    }
+
+    ShowTimeSlot showTimeSlotFirst = showTimeSlots.getFirst();
+    List<TimeSlot> timeSlots = showTimeSlots.stream().map(this::mapToTimeSlot).toList();
+
+    return ShowTimeSlotList.builder()
+        .cinemaName(showTimeSlotFirst.getCinema().getName())
+        .theaterName(showTimeSlotFirst.getTheater().getName())
+        .showTime(buildShowTimeResponse(showTimeSlotFirst))
+        .timeSlot(timeSlots)
+        .build();
+  }
+
+  private TimeSlot mapToTimeSlot(ShowTimeSlot showTimeSlot) {
+    return new TimeSlot(
+        showTimeSlot.getId(), showTimeSlot.getStartTime(), showTimeSlot.getEndTime());
+  }
+
   private ShowTimeSlot buildShowTimeSlot(
       Cinema cinema, Theater theater, ShowTime showTime, ShowTimeSlotRequest showTimeSlotRequest) {
     ShowTimeSlot showTimeSlot = new ShowTimeSlot();
@@ -57,12 +86,7 @@ public class ShowTimeSlotService {
 
   private ShowTimeSlotResponse buildShowTimeSlotResponse(ShowTimeSlot showTimeSlot) {
 
-    ShowTimeResponse showTime =
-        ShowTimeResponse.builder()
-            .id(showTimeSlot.getShowTime().getId())
-            .movieTitle(showTimeSlot.getShowTime().getMovie().getTitle())
-            .date(showTimeSlot.getShowTime().getDate())
-            .build();
+    ShowTimeResponse showTime = buildShowTimeResponse(showTimeSlot);
 
     return ShowTimeSlotResponse.builder()
         .id(showTimeSlot.getId())
@@ -71,6 +95,14 @@ public class ShowTimeSlotService {
         .showTime(showTime)
         .startTime(showTimeSlot.getStartTime())
         .endTime(showTimeSlot.getEndTime())
+        .build();
+  }
+
+  private ShowTimeResponse buildShowTimeResponse(ShowTimeSlot showTimeSlot) {
+    return ShowTimeResponse.builder()
+        .id(showTimeSlot.getShowTime().getId())
+        .movieTitle(showTimeSlot.getShowTime().getMovie().getTitle())
+        .date(showTimeSlot.getShowTime().getDate())
         .build();
   }
 }
