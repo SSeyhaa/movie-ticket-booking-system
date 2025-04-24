@@ -9,7 +9,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
-import jakarta.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +35,6 @@ public class ShowTime extends Auditable {
   private ZonedDateTime date;
 
   @ManyToOne(optional = false)
-  @NotNull(message = "please add the movie for the show time")
   private Movie movie;
 
   @OneToMany(mappedBy = "showTime", cascade = CascadeType.ALL, orphanRemoval = true)

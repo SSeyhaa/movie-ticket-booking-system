@@ -9,7 +9,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
-import jakarta.validation.constraints.NotNull;
 import java.time.LocalTime;
 import kh.dev.common_util.config.Auditable;
 import lombok.AllArgsConstructor;
@@ -34,20 +33,16 @@ public class ShowTimeSlot extends Auditable {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @NotNull(message = "Start time is required")
   @Column(nullable = false)
   private LocalTime startTime;
 
-  @NotNull(message = "End time is required")
   @Column(nullable = false)
   private LocalTime endTime;
 
   @ManyToOne(optional = false)
-  @NotNull(message = "Cinema is required")
   private Cinema cinema;
 
   @ManyToOne(optional = false)
-  @NotNull(message = "Theater is required")
   private Theater theater;
 
   @ManyToOne(optional = false)
