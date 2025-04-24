@@ -5,7 +5,6 @@ import java.time.ZonedDateTime;
 import java.util.Set;
 import kh.dev.common_util.dto.response.Response;
 import kh.dev.movie_service.model.dto.request.ShowTimeSlotRequest;
-import kh.dev.movie_service.model.dto.response.ShowTimeSlotList;
 import kh.dev.movie_service.model.dto.response.ShowTimeSlotResponse;
 import kh.dev.movie_service.service.ShowTimeSlotService;
 import lombok.RequiredArgsConstructor;
@@ -31,11 +30,11 @@ public class ShowTimeSlotController {
       @RequestBody @Valid ShowTimeSlotRequest showTimeSlotRequest) {
 
     return new ResponseEntity<>(
-        showTimeSlotService.addShowTimeSlot(showTimeSlotRequest), HttpStatus.CREATED);
+        showTimeSlotService.addShowTimeSlots(showTimeSlotRequest), HttpStatus.CREATED);
   }
 
   @GetMapping
-  public ResponseEntity<ShowTimeSlotList> getShowTimeSlots(
+  public ResponseEntity<ShowTimeSlotResponse> getShowTimeSlots(
       @RequestParam Long cinemaId, @RequestParam Long theaterId, @RequestParam Long showTimeId) {
 
     return new ResponseEntity<>(

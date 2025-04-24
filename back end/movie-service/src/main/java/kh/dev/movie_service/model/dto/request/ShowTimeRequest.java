@@ -12,5 +12,7 @@ import lombok.Setter;
 @Getter
 public class ShowTimeRequest {
   private Long movieId;
+
+  // todo: validate time
   private ZonedDateTime date;
 }
