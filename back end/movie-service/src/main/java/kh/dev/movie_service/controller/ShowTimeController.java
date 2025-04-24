@@ -2,6 +2,8 @@ package kh.dev.movie_service.controller;
 
 import java.time.ZonedDateTime;
 import java.util.Optional;
+
+import jakarta.validation.Valid;
 import kh.dev.common_util.dto.request.PaginationRequest;
 import kh.dev.common_util.dto.response.PaginationResponse;
 import kh.dev.movie_service.model.dto.request.ShowTimeRequest;
@@ -30,7 +32,7 @@ public class ShowTimeController {
 
   @PostMapping
   public ResponseEntity<ShowTimeResponse> createShowTime(
-      @RequestBody ShowTimeRequest showTimeRequest) {
+      @RequestBody @Valid ShowTimeRequest showTimeRequest) {
     return ResponseEntity.ok(showTimeService.createShowTime(showTimeRequest));
   }
 
