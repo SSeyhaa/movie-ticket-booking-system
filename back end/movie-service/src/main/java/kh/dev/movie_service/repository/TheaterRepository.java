@@ -1,6 +1,10 @@
 package kh.dev.movie_service.repository;
 
+import java.util.Optional;
 import kh.dev.movie_service.model.entity.Theater;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface TheaterRepository extends JpaRepository<Theater, Long> {}
+public interface TheaterRepository extends JpaRepository<Theater, Long> {
+
+  Optional<Theater> findByIdAndCinemaId(Long id, Long cinemaId);
+}

@@ -2,7 +2,6 @@ package kh.dev.movie_service.service;
 
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import kh.dev.movie_service.exception.ResourceNotFoundException;
 import kh.dev.movie_service.model.dto.TimeSlot;
@@ -13,8 +12,8 @@ import kh.dev.movie_service.model.entity.Cinema;
 import kh.dev.movie_service.model.entity.ShowTime;
 import kh.dev.movie_service.model.entity.ShowTimeSlot;
 import kh.dev.movie_service.model.entity.Theater;
-import kh.dev.movie_service.repository.CinemaRepository;
 import kh.dev.movie_service.repository.ShowTimeSlotRepository;
+import kh.dev.movie_service.repository.TheaterRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,29 +21,22 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ShowTimeSlotService {
 
-  private final CinemaRepository cinemaRepository;
+  private final TheaterRepository theaterRepository;
   private final ShowTimeService showTimeService;
   private final ShowTimeSlotRepository showTimeSlotRepository;
 
   public ShowTimeSlotResponse addShowTimeSlots(ShowTimeSlotRequest showTimeSlotRequest) {
 
-    // todo: refactor fetching
-    Cinema cinema =
-        cinemaRepository
-            .findByIdAndTheatersId(
-                showTimeSlotRequest.getCinemaId(), showTimeSlotRequest.getTheaterId())
-            .orElseThrow(() -> new ResourceNotFoundException("Cinema or Theater not found"));
-
     Theater theater =
-        cinema.getTheaters().stream()
-            .filter(th -> Objects.equals(th.getId(), showTimeSlotRequest.getTheaterId()))
-            .findFirst()
+        theaterRepository
+            .findByIdAndCinemaId(
+                showTimeSlotRequest.getTheaterId(), showTimeSlotRequest.getCinemaId())
             .orElseThrow(() -> new ResourceNotFoundException("Theater not found"));
 
     ShowTime showTime = showTimeService.findShowTimeById(showTimeSlotRequest.getShowTimeId());
 
     List<TimeSlot> timeSlots = showTimeSlotRequest.getTimeSlot();
-    List<ShowTimeSlot> showTimeSlot = buildShowTimeSlots(cinema, theater, showTime, timeSlots);
+    List<ShowTimeSlot> showTimeSlot = buildShowTimeSlots(theater, showTime, timeSlots);
     List<ShowTimeSlot> showTimeSlotsSaved = showTimeSlotRepository.saveAll(showTimeSlot);
 
     return buildShowTimeSlotResponse(showTimeSlotsSaved);
@@ -83,10 +75,10 @@ public class ShowTimeSlotService {
   }
 
   private List<ShowTimeSlot> buildShowTimeSlots(
-      Cinema cinema, Theater theater, ShowTime showTime, List<TimeSlot> timeSlots) {
+      Theater theater, ShowTime showTime, List<TimeSlot> timeSlots) {
 
     return timeSlots.stream()
-        .map(timeSlot -> buildShowTimeSlot(cinema, theater, showTime, timeSlot))
+        .map(timeSlot -> buildShowTimeSlot(theater.getCinema(), theater, showTime, timeSlot))
         .toList();
   }
 

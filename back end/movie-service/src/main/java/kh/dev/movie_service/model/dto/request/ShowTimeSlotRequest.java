@@ -1,5 +1,6 @@
 package kh.dev.movie_service.model.dto.request;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import kh.dev.movie_service.model.dto.TimeSlot;
@@ -23,5 +24,6 @@ public class ShowTimeSlotRequest {
   @NotNull(message = "Show time is required")
   private Long showTimeId;
 
+  @Valid
   private List<TimeSlot> timeSlot;
 }
