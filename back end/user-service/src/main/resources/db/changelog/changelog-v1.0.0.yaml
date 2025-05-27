@@ -1,87 +1,73 @@
 databaseChangeLog:
-
   - changeSet:
-      context: "!test"
-      id: 1
+      id: 1748339811063-1
       author: SENG Seyha
-      changes:
-        - sql: # Create the ENUM type for Role
-            sql: "CREATE TYPE system_role_type AS ENUM ('SUPER_ADMIN', 'USER');"
-
-
-  - changeSet:
-      context: "test"
-      id: 2
-      author: SENG Seyha
-      changes:
-        - sql:
-            sql: "CREATE TYPE IF NOT EXISTS system_role_type AS VARCHAR(20) CHECK (VALUE IN ('SUPER_ADMIN', 'USER'));"
-
-
-  - changeSet:
-      id: 3
-      author: SENG Seyha
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - createTable:
-            tableName: users
             columns:
               - column:
-                  name: id
-                  type: bigint
                   autoIncrement: true
                   constraints:
+                    nullable: false
                     primaryKey: true
+                    primaryKeyName: pk_system_roles
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: role
+                  type: VARCHAR(255)
+            tableName: system_roles
+
+
+  - changeSet:
+      id: 1748339811063-2
+      author: SENG Seyha
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_users
+                  name: id
+                  type: BIGINT
               - column:
                   name: keycloak_id
-                  type: varchar(255)
-                  constraints:
-                    unique: true
-                    nullable: false
+                  type: VARCHAR(255)
               - column:
                   name: profile_image_path
-                  type: varchar(255)
-                  constraints:
-                    nullable: true
+                  type: VARCHAR(255)
               - column:
                   name: username
-                  type: varchar(20)
-                  constraints:
-                    nullable: false
+                  type: VARCHAR(255)
               - column:
                   name: email
-                  type: varchar(50)
-                  constraints:
-                    unique: true
-                    nullable: false
+                  type: VARCHAR(255)
               - column:
                   name: first_name
-                  type: varchar(50)
-                  constraints:
-                    nullable: false
+                  type: VARCHAR(255)
               - column:
                   name: last_name
-                  type: varchar(50)
-                  constraints:
-                    nullable: false
+                  type: VARCHAR(255)
               - column:
                   name: phone_number
-                  type: varchar(50)
-                  constraints:
-                    unique: true
+                  type: VARCHAR(255)
               - column:
                   name: address
-                  type: varchar(100)
-                  constraints:
-                    nullable: true
+                  type: VARCHAR(255)
               - column:
                   name: city
-                  type: varchar(30)
-                  constraints:
-                    nullable: true
+                  type: VARCHAR(255)
               - column:
+                  constraints:
+                    nullable: false
                   name: is_active
-                  type: boolean
-                  defaultValueBoolean: false
+                  type: BOOLEAN
+            tableName: users
 
   - include:
       file: audit-columns.yaml
@@ -90,87 +76,49 @@ databaseChangeLog:
       name: tableName
       value: users
 
+
   - changeSet:
-      context: "!test"
-      id: 4
+      id: 1748339811063-3
       author: SENG Seyha
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - createTable:
-            tableName: system_roles
             columns:
               - column:
-                  name: id
-                  type: bigint
-                  autoIncrement: true
                   constraints:
+                    nullable: false
                     primaryKey: true
-              - column:
-                  name: role
-                  type: system_role_type
-
-
-  - changeSet:
-      context: "test"
-      id: 5
-      author: SENG Seyha
-      changes:
-        - createTable:
-            tableName: system_roles
-            columns:
-              - column:
-                  name: id
-                  type: bigint
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-              - column:
-                  name: role
-                  type: varchar(20)
-                  constraints:
-                    checkConstraint: "role IN ('SUPER_ADMIN', 'USER')"
-
-
-  - changeSet:
-      id: 6
-      author: SENG Seyha
-      changes:
-        - insert:
-            tableName: system_roles
-            columns:
-              - column:
-                  name: role
-                  value: 'SUPER_ADMIN'
-        - insert:
-            tableName: system_roles
-            columns:
-              - column:
-                  name: role
-                  value: 'USER'
-
-
-  - changeSet:
-      id: 7
-      author: SENG Seyha
-      changes:
-        - createTable:
-            tableName: users_system_roles
-            columns:
-              - column:
-                  name: id
-                  type: bigint
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-              - column:
+                    primaryKeyName: pk_users_systemroles
                   name: user_id
-                  type: bigint
-                  constraints:
-                    foreignKeyName: fk_user_id
-                    references: users(id)
+                  type: BIGINT
               - column:
-                  name: system_roles_id
-                  type: bigint
                   constraints:
-                    foreignKeyName: fk_system_roles_id
-                    references: system_roles(id)
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_users_systemroles
+                  name: system_roles_id
+                  type: BIGINT
+            tableName: users_system_roles
+  - changeSet:
+      id: 1748339811063-4
+      author: SENG Seyha
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: system_roles_id
+            baseTableName: users_system_roles
+            constraintName: fk_usesysrol_on_system_role
+            referencedColumnNames: id
+            referencedTableName: system_roles
+  - changeSet:
+      id: 1748339811063-5
+      author: SENG Seyha
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: users_system_roles
+            constraintName: fk_usesysrol_on_user
+            referencedColumnNames: id
+            referencedTableName: users
 

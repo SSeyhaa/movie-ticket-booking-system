@@ -2,11 +2,11 @@ package kh.dev.common_util.constant;
 
 import java.util.stream.Stream;
 
-public enum SystemRole {
+public enum Role {
   SUPER_ADMIN,
   USER;
 
   public static String[] getRoles() {
-    return Stream.of(SystemRole.values()).map(SystemRole::name).toArray(String[]::new);
+    return Stream.of(Role.values()).map(Role::name).toArray(String[]::new);
   }
 }

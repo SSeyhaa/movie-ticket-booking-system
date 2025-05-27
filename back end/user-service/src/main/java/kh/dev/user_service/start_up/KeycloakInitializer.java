@@ -1,6 +1,6 @@
 package kh.dev.user_service.start_up;
 
-import kh.dev.common_util.constant.SystemRole;
+import kh.dev.common_util.constant.Role;
 import kh.dev.user_service.config.KeycloakProperty;
 import kh.dev.user_service.exception.RoleAssignmentException;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class KeycloakInitializer implements Task, Ordered {
       RealmResource realmResource = keycloak.realm(keycloakProperty.getRealm());
       RolesResource rolesResource = realmResource.roles();
 
-      for (String role : SystemRole.getRoles()) {
+      for (String role : Role.getRoles()) {
         if (!roleExists(rolesResource, role)) {
           createRoleKeycloakRealm(rolesResource, role);
         }

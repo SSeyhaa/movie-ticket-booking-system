@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import kh.dev.common_util.constant.SystemRole;
+import kh.dev.common_util.constant.Role;
 import kh.dev.user_service.client.KeycloakClient;
 import kh.dev.user_service.config.KeycloakProperty;
 import kh.dev.user_service.exception.ResourceNotFoundException;
@@ -217,7 +217,7 @@ public class KeycloakService {
   }
 
   private void assignRolesToUser(
-      RealmResource realmResource, UserResource userResource, Set<SystemRole> userRoles) {
+      RealmResource realmResource, UserResource userResource, Set<Role> userRoles) {
     RolesResource rolesResource = realmResource.roles();
     List<RoleRepresentation> rolesRepresentation = new ArrayList<>();
 

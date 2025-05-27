@@ -1,7 +1,7 @@
 package kh.dev.user_service.start_up;
 
 import java.util.Set;
-import kh.dev.common_util.constant.SystemRole;
+import kh.dev.common_util.constant.Role;
 import kh.dev.user_service.config.KeycloakProperty;
 import kh.dev.user_service.model.dto.request.UserRequest;
 import kh.dev.user_service.service.UserService;
@@ -38,7 +38,7 @@ public class SuperAdminInitializer implements Task, Ordered {
         .firstName(keycloakProperty.getFirstNameSuperAdmin())
         .lastName(keycloakProperty.getLastNameSuperAdmin())
         .password(keycloakProperty.getPasswordSuperAdmin())
-        .roles(Set.of(SystemRole.SUPER_ADMIN))
+        .roles(Set.of(Role.SUPER_ADMIN))
         .isActive(true)
         .build();
   }

@@ -1,7 +1,7 @@
 package kh.dev.user_service.model.dto.response;
 
 import java.util.Set;
-import kh.dev.common_util.constant.SystemRole;
+import kh.dev.common_util.constant.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,7 +18,7 @@ public class UserResponse {
   private Long id;
 
   private String keycloakId;
-  private Set<SystemRole> roles;
+  private Set<Role> roles;
   private String profileImagePath;
   private String username;
   private String email;

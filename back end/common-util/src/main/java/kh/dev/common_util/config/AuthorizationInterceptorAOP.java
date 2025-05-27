@@ -2,7 +2,7 @@ package kh.dev.common_util.config;
 
 import java.util.Arrays;
 import kh.dev.common_util.annotation.RoleRequired;
-import kh.dev.common_util.constant.SystemRole;
+import kh.dev.common_util.constant.Role;
 import kh.dev.common_util.exception.AccessDeniedException;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
  * }</pre>
  *
  * @see RoleRequired
- * @see SystemRole
+ * @see Role
  */
 @Deprecated
 @Component
@@ -59,7 +59,7 @@ public class AuthorizationInterceptorAOP {
     }
 
     boolean hasRole = false;
-    for (SystemRole role : roleRequired.required()) {
+    for (Role role : roleRequired.required()) {
       if (authentication
           .getAuthorities()
           .contains(new SimpleGrantedAuthority(ROLE_PREFIX.concat(role.toString())))) {

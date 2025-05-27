@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 import kh.dev.common_util.annotation.RoleRequired;
-import kh.dev.common_util.constant.SystemRole;
+import kh.dev.common_util.constant.Role;
 import kh.dev.common_util.dto.request.PaginationRequest;
 import kh.dev.common_util.dto.response.Response;
 import kh.dev.common_util.constant.SeatType;
@@ -36,14 +36,14 @@ public class SeatController {
   private final SeatService seatService;
 
   @PostMapping
-  @RoleRequired(required = SystemRole.SUPER_ADMIN)
+  @RoleRequired(required = Role.SUPER_ADMIN)
   public ResponseEntity<TheaterSeatsDto> createSeat(@RequestBody TheaterSeatsDto theaterSeatsDto) {
     return new ResponseEntity<>(
         seatService.createSeatByTheater(theaterSeatsDto), HttpStatus.CREATED);
   }
 
   @PostMapping(value = "/csv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  @RoleRequired(required = SystemRole.SUPER_ADMIN)
+  @RoleRequired(required = Role.SUPER_ADMIN)
   public ResponseEntity<Response> createSeatCSV(
       @RequestParam Long theaterId, @RequestParam(name = "file") MultipartFile file)
       throws IOException {
@@ -59,7 +59,7 @@ public class SeatController {
   }
 
   @GetMapping
-  @RoleRequired(required = SystemRole.SUPER_ADMIN)
+  @RoleRequired(required = Role.SUPER_ADMIN)
   public ResponseEntity<PaginationResponse<SeatDto>> getSeats(
       @ModelAttribute PaginationRequest paginationRequest,
       @RequestParam Optional<Long> theaterId,
@@ -71,7 +71,7 @@ public class SeatController {
   }
 
   @PutMapping
-  @RoleRequired(required = SystemRole.SUPER_ADMIN)
+  @RoleRequired(required = Role.SUPER_ADMIN)
   public ResponseEntity<Response> updateSeatsByTheaterId(
       @RequestBody TheaterSeatsDto theaterSeatsDto) {
     seatService.updateSeat(theaterSeatsDto);
@@ -86,7 +86,7 @@ public class SeatController {
   }
 
   @DeleteMapping
-  @RoleRequired(required = SystemRole.SUPER_ADMIN)
+  @RoleRequired(required = Role.SUPER_ADMIN)
   public ResponseEntity<Response> deleteSeatsByTheaterId(
       @RequestBody TheaterSeatsDto theaterSeatsDto) {
     seatService.deleteSeatsByTheaterId(theaterSeatsDto);

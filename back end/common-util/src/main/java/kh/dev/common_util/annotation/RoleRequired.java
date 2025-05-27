@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import kh.dev.common_util.config.AuthorizationInterceptor;
-import kh.dev.common_util.constant.SystemRole;
+import kh.dev.common_util.constant.Role;
 
 /**
  * Annotation to specify role-based access control for methods.
@@ -23,7 +23,7 @@ import kh.dev.common_util.constant.SystemRole;
  * }
  * }</pre>
  *
- * <p>The required roles must be defined in the {@link SystemRole} enum. If a user does not have any
+ * <p>The required roles must be defined in the {@link Role} enum. If a user does not have any
  * of the specified roles, access will be denied.
  *
  * @see AuthorizationInterceptor
@@ -32,5 +32,5 @@ import kh.dev.common_util.constant.SystemRole;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RoleRequired {
 
-  SystemRole[] required();
+  Role[] required();
 }
