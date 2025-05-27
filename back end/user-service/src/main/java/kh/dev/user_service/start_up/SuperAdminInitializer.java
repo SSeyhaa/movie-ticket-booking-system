@@ -7,10 +7,10 @@ import kh.dev.user_service.model.dto.request.UserRequest;
 import kh.dev.user_service.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import org.springframework.stereotype.Component;
 
-@Configuration
+@Component
 @RequiredArgsConstructor
 @Slf4j
 public class SuperAdminInitializer implements Task, Ordered {

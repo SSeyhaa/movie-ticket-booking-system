@@ -242,4 +242,27 @@ public class KeycloakService {
     userResource.remove();
     log.info("----- User with id {} deleted successfully in Keycloak server", userId);
   }
+
+  public Optional<UserRepresentation> getUserByEmail(String email) {
+    List<UserRepresentation> users = realmResource.users().searchByEmail(email, true);
+    return users.stream().filter(user -> user.getEmail().equalsIgnoreCase(email)).findFirst();
+  }
+
+  public boolean roleExists(RolesResource rolesResource, String role) {
+    try {
+      rolesResource.get(role).toRepresentation();
+      log.info("----- Role {} already exists in Keycloak server", role);
+      return true;
+    } catch (Exception e) {
+      log.info("----- Role {} does not exist in Keycloak server", role);
+      return false;
+    }
+  }
+
+  public void createRoleKeycloakRealm(RolesResource rolesResource, String role) {
+    RoleRepresentation roleRepresentation = new RoleRepresentation();
+    roleRepresentation.setName(role);
+    rolesResource.create(roleRepresentation);
+    log.info("----- Role {} created successfully in Keycloak server", role);
+  }
 }
