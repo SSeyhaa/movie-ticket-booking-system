@@ -1,9 +1,16 @@
 # movie-ticket-booking-system
 The Movie Ticket Booking System is designed to allow users to browse available movies, select showtimes, book tickets, and make payments online. The system is composed of multiple microservices, each handling different parts of the application, like movie listings, theaters, payments, notifications, and user management.
 
+A full-stack project built with Java Spring Boot (Microservices Architecture) and React.js, designed to simulate a real-world movie ticket booking platform. This project is a personal initiative for self-learning, research, and applying best practices in backend and frontend development.
+- Applying clean architecture principles
+- Applying SOLID principles and design pattern
+- Implementing scalable microservices
+- Practicing modern development tools and libraries
+- Enhancing backend skills through real-world scenarios
+
 # Microservices Technologies
 
-In Future, this repository will be implemented an overview of key technologies used in building modern microservices architectures.
+In Future, this repository will be implemented these below key technologies used in building modern microservices architectures.
 
 ## 1. Core Spring Boot Technologies
 
