@@ -1,6 +1,7 @@
 package kh.dev.user_service.start_up;
 
 import java.util.Set;
+import kh.dev.common_util.constant.LogMessage;
 import kh.dev.common_util.constant.Role;
 import kh.dev.user_service.config.KeycloakProperty;
 import kh.dev.user_service.model.dto.request.UserRequest;
@@ -19,7 +20,7 @@ public class SuperAdminInitializer implements Task, Ordered {
 
   @Override
   public int getOrder() {
-    return 1;
+    return 2;
   }
 
   @Override
@@ -27,7 +28,7 @@ public class SuperAdminInitializer implements Task, Ordered {
     try {
       userService.create(buildSuperAdminProperty());
     } catch (Exception e) {
-      log.info("----- [Super admin]: {}", e.getMessage());
+      log.info("{} [Super admin]: {}", LogMessage.FIVE_DASH, e.getMessage());
     }
   }
 

@@ -12,11 +12,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "system_roles")
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 @Setter
 @Getter
 public class SystemRole {

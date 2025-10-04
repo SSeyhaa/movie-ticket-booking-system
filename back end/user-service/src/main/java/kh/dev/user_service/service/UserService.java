@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.util.Optional;
 import java.util.Set;
 import kh.dev.common_util.config.CustomJwtAuthenticationToken;
+import kh.dev.common_util.constant.LogMessage;
 import kh.dev.common_util.constant.NotificationTemplate;
 import kh.dev.common_util.constant.NotificationType;
 import kh.dev.common_util.constant.TopicMessageBinding;
@@ -97,17 +98,30 @@ public class UserService {
   }
 
   private void notifyUserCreated(User userCreated) {
-    NotificationRequest notificationRequest = new NotificationRequest();
-    notificationRequest.setRecipient(userCreated.getEmail());
-    notificationRequest.setType(NotificationType.EMAIL);
-    notificationRequest.setTemplate(NotificationTemplate.USER_REGISTRATION);
+    try {
+      NotificationRequest notificationRequest = new NotificationRequest();
+      notificationRequest.setRecipient(userCreated.getEmail());
+      notificationRequest.setType(NotificationType.EMAIL);
+      notificationRequest.setTemplate(NotificationTemplate.USER_REGISTRATION);
 
-    ExecutionContext metadata = new ExecutionContext();
-    metadata.put(UserConstants.FIRST_NAME, userCreated.getFirstName());
-    metadata.put(UserConstants.LAST_NAME, userCreated.getLastName());
-    notificationRequest.setMetadata(metadata);
+      ExecutionContext metadata = new ExecutionContext();
+      metadata.put(UserConstants.FIRST_NAME, userCreated.getFirstName());
+      metadata.put(UserConstants.LAST_NAME, userCreated.getLastName());
+      notificationRequest.setMetadata(metadata);
 
-    streamBridge.send(TopicMessageBinding.NOTIFICATION_EVENT_TOPIC.toString(), notificationRequest);
+      streamBridge.send(
+          TopicMessageBinding.NOTIFICATION_EVENT_TOPIC.toString(), notificationRequest);
+      log.info(
+          "{} User creation notification sent to email: {}",
+          LogMessage.FIVE_DASH,
+          userCreated.getEmail());
+    } catch (Exception e) {
+      log.error(
+          "{} Failed to send user creation notification for email: {}",
+          LogMessage.FIVE_DASH,
+          userCreated.getEmail(),
+          e);
+    }
   }
 
   public void changePassword(

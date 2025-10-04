@@ -1,5 +1,6 @@
 package kh.dev.user_service.start_up;
 
+import kh.dev.common_util.constant.LogMessage;
 import kh.dev.common_util.constant.Role;
 import kh.dev.user_service.exception.RoleAssignmentException;
 import kh.dev.user_service.service.KeycloakService;
@@ -13,13 +14,13 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class RoleInitializer implements Task, Ordered {
+public class KCRoleInitializer implements Task, Ordered {
   private final RealmResource realmResource;
   private final KeycloakService keycloakService;
 
   @Override
   public int getOrder() {
-    return 0;
+    return 1;
   }
 
   @Override
@@ -27,13 +28,13 @@ public class RoleInitializer implements Task, Ordered {
     try {
       RolesResource rolesResource = realmResource.roles();
 
-      for (String role : Role.getRoles()) {
+      for (String role : Role.getRolesStr()) {
         if (!keycloakService.roleExists(rolesResource, role)) {
           keycloakService.createRoleKeycloakRealm(rolesResource, role);
         }
       }
     } catch (Exception e) {
-      log.error("----- Failed to initialize roles to Keycloak realm", e);
+      log.error("{} Failed to initialize roles to Keycloak realm", LogMessage.FIVE_DASH, e);
       throw new RoleAssignmentException("Failed to initialize roles to Keycloak realm", e);
     }
   }

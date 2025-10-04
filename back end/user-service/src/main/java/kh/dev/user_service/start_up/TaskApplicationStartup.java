@@ -1,6 +1,7 @@
 package kh.dev.user_service.start_up;
 
 import java.util.List;
+import kh.dev.common_util.constant.LogMessage;
 import kh.dev.user_service.constant.ProfileConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -25,10 +26,14 @@ public class TaskApplicationStartup implements ApplicationListener<ApplicationRe
     for (Task task : tasks) {
       try {
         task.run();
-        log.info("Task '{}' completed successfully.", task.getClass().getSimpleName());
+        log.info(
+            "{} Task '{}' completed successfully.",
+            LogMessage.FIVE_DASH,
+            task.getClass().getSimpleName());
       } catch (Exception e) {
         log.error(
-            "Task '{}' failed with exception: {}",
+            "{} Task '{}' failed with exception: {}",
+            LogMessage.FIVE_DASH,
             task.getClass().getSimpleName(),
             e.getMessage(),
             e);
