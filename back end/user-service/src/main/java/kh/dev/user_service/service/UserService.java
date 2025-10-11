@@ -47,6 +47,7 @@ public class UserService {
   private final UserRepository userRepository;
   private final KeycloakService keycloakService;
   private final RoleRepository roleRepository;
+  private final RoleService roleService;
 
   @Value("${app.storage.file.profile-picture}")
   private String profilePictureStorage;
@@ -164,7 +165,7 @@ public class UserService {
 
   public UserResponse getUserById(Long id) {
     User user = findUserById(id);
-    return modelMapper.map(user, UserResponse.class);
+    return mapToUserResponse(user);
   }
 
   public UserResponse updateUserById(Long id, UserRequest userRequest) {
@@ -204,5 +205,22 @@ public class UserService {
     userRepository.delete(user);
     keycloakService.deleteUserById(user.getKeycloakId());
     log.info("----- User with email {} deleted successfully", user.getEmail());
+  }
+
+  public UserResponse mapToUserResponse(User user) {
+    return UserResponse.builder()
+        .id(user.getId())
+        .keycloakId(user.getKeycloakId())
+        .roles(roleService.mapToRoles(user.getSystemRoles()))
+        .profileImagePath(user.getProfileImagePath())
+        .username(user.getUsername())
+        .email(user.getEmail())
+        .firstName(user.getFirstName())
+        .lastName(user.getLastName())
+        .phoneNumber(user.getPhoneNumber())
+        .address(user.getAddress())
+        .city(user.getCity())
+        .isActive(user.isActive())
+        .build();
   }
 }

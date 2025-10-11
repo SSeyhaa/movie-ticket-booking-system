@@ -23,4 +23,10 @@ public class RoleService {
   public Set<SystemRole> findRoles(Set<Role> roles) {
     return roleRepository.findByRoleIn(roles);
   }
+
+  public Set<Role> mapToRoles(Set<SystemRole> systemRoles) {
+    return systemRoles.stream()
+        .map(SystemRole::getRole)
+        .collect(java.util.stream.Collectors.toSet());
+  }
 }

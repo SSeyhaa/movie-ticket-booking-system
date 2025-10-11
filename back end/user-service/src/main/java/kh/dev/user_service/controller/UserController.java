@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.io.IOException;
 import java.time.ZonedDateTime;
+import kh.dev.common_util.dto.response.ApiResponse;
 import kh.dev.common_util.dto.response.Response;
 import kh.dev.user_service.model.dto.request.PasswordChangeRequest;
 import kh.dev.user_service.model.dto.request.UserRequest;
@@ -26,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/v1/users")
+@RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
   private final UserService userService;
@@ -53,9 +54,9 @@ public class UserController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
+  public ResponseEntity<ApiResponse<UserResponse>> getUserById(@PathVariable Long id) {
     UserResponse userResponse = userService.getUserById(id);
-    return ResponseEntity.ok(userResponse);
+    return ResponseEntity.ok(ApiResponse.success("user has been found", userResponse));
   }
 
   @PutMapping("/{id}")
