@@ -4,7 +4,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
+import kh.dev.common_util.constant.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.converter.Converter;
@@ -30,7 +32,9 @@ public class JwtConverter implements Converter<Jwt, AbstractAuthenticationToken>
 
   @Override
   public AbstractAuthenticationToken convert(@NonNull Jwt jwt) {
-    Collection<GrantedAuthority> authorities = extractRealmRoles(jwt);
+    final Set<Role> roles = extractRealmRoles(jwt);
+    Collection<GrantedAuthority> authorities = getAuthorities(roles);
+
     return new CustomJwtAuthenticationToken(
         jwt,
         authorities,
@@ -38,10 +42,11 @@ public class JwtConverter implements Converter<Jwt, AbstractAuthenticationToken>
         jwt.getClaim(EMAIL_CLAIM),
         jwt.getClaim(NAME_CLAIM),
         jwt.getClaim(GIVEN_NAME_CLAIM),
-        jwt.getClaim(FAMILY_NAME_CLAIM));
+        jwt.getClaim(FAMILY_NAME_CLAIM),
+        roles);
   }
 
-  public Collection<GrantedAuthority> extractRealmRoles(@NonNull Jwt jwt) {
+  public Set<Role> extractRealmRoles(@NonNull Jwt jwt) {
     Map<String, List<String>> realmAccess = getRealmAccess(jwt);
 
     if (realmAccess == null || realmAccess.get(ROLES) == null) {
@@ -49,7 +54,13 @@ public class JwtConverter implements Converter<Jwt, AbstractAuthenticationToken>
       return Collections.emptySet();
     }
 
-    return realmAccess.get(ROLES).stream()
+    return Role.getRolesEnum().stream()
+        .filter(role -> realmAccess.get(ROLES).contains(role.toString()))
+        .collect(Collectors.toSet());
+  }
+
+  public Collection<GrantedAuthority> getAuthorities(Set<Role> roles) {
+    return roles.stream()
         .map(role -> new SimpleGrantedAuthority(ROLE_PREFIX + role))
         .collect(Collectors.toSet());
   }

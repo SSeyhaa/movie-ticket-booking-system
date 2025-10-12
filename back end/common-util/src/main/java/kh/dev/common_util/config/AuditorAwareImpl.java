@@ -1,7 +1,7 @@
 package kh.dev.common_util.config;
 
 import java.util.Optional;
-import kh.dev.common_util.util.CurrentUserUtils;
+import kh.dev.common_util.util.CurrentAuthenticatedUser;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
@@ -13,7 +13,7 @@ public class AuditorAwareImpl implements AuditorAware<String> {
   @NonNull
   public Optional<String> getCurrentAuditor() {
 
-    return CurrentUserUtils.getCurrentUserOptional()
+    return CurrentAuthenticatedUser.getUserOptional()
         .filter(Authentication::isAuthenticated)
         .map(CustomJwtAuthenticationToken::getFullName)
         .filter(StringUtils::hasText)

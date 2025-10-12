@@ -2,6 +2,8 @@ package kh.dev.common_util.config;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Set;
+import kh.dev.common_util.constant.Role;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -23,6 +25,7 @@ public class CustomJwtAuthenticationToken extends JwtAuthenticationToken {
   private final String fullName;
   private final String firstName;
   private final String lastName;
+  private final Set<Role> roles;
 
   /**
    * Constructs a {@code CustomJwtAuthenticationToken} with the given JWT and user details.
@@ -34,6 +37,7 @@ public class CustomJwtAuthenticationToken extends JwtAuthenticationToken {
    * @param fullName the full name of the user.
    * @param firstName the first name of the user.
    * @param lastName the last name of the user.
+   * @param roles the roles of the user.
    */
   public CustomJwtAuthenticationToken(
       Jwt jwt,
@@ -42,13 +46,15 @@ public class CustomJwtAuthenticationToken extends JwtAuthenticationToken {
       String email,
       String fullName,
       String firstName,
-      String lastName) {
+      String lastName,
+      Set<Role> roles) {
     super(jwt, authorities);
     this.keycloakId = keycloakId;
     this.email = email;
     this.fullName = fullName;
     this.firstName = firstName;
     this.lastName = lastName;
+    this.roles = roles;
   }
 
   @Override
@@ -66,6 +72,6 @@ public class CustomJwtAuthenticationToken extends JwtAuthenticationToken {
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), keycloakId, email, fullName, firstName, lastName);
+    return Objects.hash(super.hashCode(), keycloakId, email, fullName, firstName, lastName, roles);
   }
 }

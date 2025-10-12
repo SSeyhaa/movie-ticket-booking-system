@@ -14,7 +14,7 @@ import kh.dev.common_util.constant.NotificationType;
 import kh.dev.common_util.constant.TopicMessageBinding;
 import kh.dev.common_util.constant.UserConstants;
 import kh.dev.common_util.dto.request.NotificationRequest;
-import kh.dev.common_util.util.CurrentUserUtils;
+import kh.dev.common_util.util.CurrentAuthenticatedUser;
 import kh.dev.common_util.util.ExecutionContext;
 import kh.dev.common_util.util.FileUtils;
 import kh.dev.user_service.exception.ResourceNotFoundException;
@@ -131,7 +131,7 @@ public class UserService {
       PasswordChangeRequest passwordChangeRequest) {
     KeycloakService.getRefreshTokenCookie(request); // throw exception if refresh token not found
 
-    CustomJwtAuthenticationToken currentUser = CurrentUserUtils.getCurrentUser();
+    CustomJwtAuthenticationToken currentUser = CurrentAuthenticatedUser.getUser();
     if (!currentUser.getEmail().equals(passwordChangeRequest.getEmail())) {
       throw new ValidationException("Access denies, Invalid email");
     }
