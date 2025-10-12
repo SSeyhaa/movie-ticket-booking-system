@@ -11,6 +11,7 @@ import kh.dev.common_util.config.CustomJwtAuthenticationToken;
 import kh.dev.common_util.constant.LogMessage;
 import kh.dev.common_util.constant.NotificationTemplate;
 import kh.dev.common_util.constant.NotificationType;
+import kh.dev.common_util.constant.Role;
 import kh.dev.common_util.constant.TopicMessageBinding;
 import kh.dev.common_util.constant.UserConstants;
 import kh.dev.common_util.dto.request.NotificationRequest;
@@ -164,7 +165,14 @@ public class UserService {
   }
 
   public UserResponse getUserById(Long id) {
-    User user = findUserById(id);
+    User user;
+    if (Role.isSuperAdmin()) {
+      user = findUserById(id);
+    } else {
+      final String userEmail = CurrentAuthenticatedUser.getEmail();
+      user = findUserByIdAndEmail(id, userEmail);
+    }
+
     return mapToUserResponse(user);
   }
 
