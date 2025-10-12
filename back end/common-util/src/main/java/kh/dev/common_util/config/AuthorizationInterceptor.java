@@ -6,13 +6,14 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 import kh.dev.common_util.annotation.RoleRequired;
+import kh.dev.common_util.constant.LogMessage;
+import kh.dev.common_util.constant.Role;
 import kh.dev.common_util.exception.AccessDeniedException;
+import kh.dev.common_util.util.CurrentAuthenticatedUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -26,20 +27,17 @@ import org.springframework.web.servlet.HandlerInterceptor;
  * <p>This interceptor works by:
  *
  * <ol>
- *   <li>Retrieving the current authentication from the {@link SecurityContextHolder}.
+ *   <li>Retrieving the current authentication from the {@link CurrentAuthenticatedUser}.
  *   <li>Checking if the user is authenticated and has assigned roles.
  *   <li>Extracting the required roles from the {@link RoleRequired} annotation.
  *   <li>Comparing the user's roles against the required roles.
  *   <li>Allowing access if at least one required role matches the user's roles.
- *   <li>Logging unauthorized access attempts and throwing an {@link AccessDeniedException} if
- *       access is denied.
+ *   <li>Throwing an {@link AccessDeniedException} if access is denied.
  * </ol>
  */
 @Component
 @Slf4j
 public class AuthorizationInterceptor implements HandlerInterceptor {
-
-  private static final String ROLE_PREFIX = "ROLE_";
 
   /**
    * Intercepts incoming HTTP requests to perform authorization checks.
@@ -56,8 +54,8 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
       @NonNull HttpServletResponse response,
       @NonNull Object handler) {
 
-    Authentication authentication = getAuthenticatedUser();
-    validateUserRoles(authentication);
+    final Set<Role> userRoles = CurrentAuthenticatedUser.getRoles();
+    validateUserRoles(userRoles);
 
     if (handler instanceof HandlerMethod handlerMethod) {
 
@@ -66,12 +64,12 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
         return true;
       }
 
-      if (hasRequiredRole(authentication, roleRequired)) {
+      if (hasRequiredRole(userRoles, roleRequired)) {
+        log.info("{} User has required roles. Access granted.", LogMessage.FIVE_DASH);
         return true;
       }
 
       String requiredRolesString = getRequiredRolesString(roleRequired);
-      logUnauthorizedAccess(authentication, requiredRolesString);
       throw new AccessDeniedException(
           "Access denied for the required roles: " + requiredRolesString);
     }
@@ -79,36 +77,14 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
     return false;
   }
 
-  private Authentication getAuthenticatedUser() {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    if (authentication == null || !authentication.isAuthenticated()) {
-      throw new AccessDeniedException("User is not authenticated");
-    }
-    return authentication;
-  }
-
-  private void validateUserRoles(Authentication authentication) {
-    if (authentication.getAuthorities() == null || authentication.getAuthorities().isEmpty()) {
+  private void validateUserRoles(Set<Role> roles) {
+    if (CollectionUtils.isEmpty(roles)) {
       throw new AccessDeniedException("User has no assigned roles");
     }
   }
 
-  private boolean hasRequiredRole(Authentication authentication, RoleRequired roleRequired) {
-    Set<String> userRoles =
-        authentication.getAuthorities().stream()
-            .map(GrantedAuthority::getAuthority)
-            .collect(Collectors.toSet());
-
-    return Arrays.stream(roleRequired.required())
-        .map(role -> ROLE_PREFIX + role.name())
-        .anyMatch(userRoles::contains);
-  }
-
-  private void logUnauthorizedAccess(Authentication authentication, String requiredRolesString) {
-    log.warn(
-        "Unauthorized access attempt: user={}, requiredRoles={}",
-        authentication.getName(),
-        requiredRolesString);
+  private boolean hasRequiredRole(Set<Role> userRoles, RoleRequired roleRequired) {
+    return Arrays.stream(roleRequired.required()).anyMatch(userRoles::contains);
   }
 
   private String getRequiredRolesString(RoleRequired roleRequired) {
