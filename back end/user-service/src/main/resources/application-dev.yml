@@ -1,0 +1,109 @@
+server:
+  port: ${USER_SERVICE_PORT}
+
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${DISCOVERY_SERVICE_URL}
+  instance:
+    preferIpAddress: true
+
+
+logging:
+  level:
+    root: info # default logger that applies to all packages in the application
+    org.springframework: debug
+  file:
+    name: ./${spring.application.name}/logs/app.log
+  logback:
+    rollingpolicy:
+      file-name-pattern: app_%d{dd-MM-yyyy}_%i.log
+      max-file-size: 10MB # Maximum size for each log file (e.g., 10MB). A new file is created when reached
+      total-size-cap: 1GB # Total size limit for all log files (e.g., 1GB), the Older files are deleted if exceeded
+      max-history: 7 # Maximum number of log files to keep (e.g., 7 days), the Older files were deleted to maintain this limit.
+#      clean-history-on-start: true # Clean up the history log files on application start
+
+
+springdoc:
+  swagger-ui:
+    persistAuthorization: true
+    with-credentials: true
+    oauth:
+      client-id: ${USER_SERVICE_KEYCLOAK_CLIENT_ID}
+      client-secret: ${USER_SERVICE_KEYCLOAK_CLIENT_SECRET}
+
+
+spring:
+
+  # Database configuration
+  datasource:
+    url: jdbc:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/${USER_SERVICE_DATABASE}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      minimum-idle: 5 # minimum number of idle connections in the pool
+      maximum-pool-size: 20 # maximum number of connections in the pool
+      connection-timeout: 30000 # wait for a connection to become available from the pool.
+      idle-timeout: 300000 # close and remove idle connections that greater than {minimum-idle} in the pool
+      max-lifetime: 1800000 # restart the connection after this duration
+
+
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: always
+      schema: classpath:sql/quartz.sql
+    properties:
+      org:
+        quartz:
+          jobStore:
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+
+
+  # JPA configuration
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    contexts: '!test'
+
+
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: ${KAFKA_URL} # must enable authentication and encryption in Production
+          auto-create-topics: ${KAFKA_AUTO_CREATE_TOPICS:true} # must disable auto Topic creation in Production
+          replicationFactor: 1
+      bindings:
+        notification-event-topic-out-0:
+          group: notification-group
+          destination: NOTIFICATION_EVENT_TOPIC
+
+
+app:
+  keycloak:
+    server-url: ${KEYCLOAK_URL}
+    realm: ${KEYCLOAK_REALM}
+    client-id: ${USER_SERVICE_KEYCLOAK_CLIENT_ID}
+    client-secret: ${USER_SERVICE_KEYCLOAK_CLIENT_SECRET}
+    token-url: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/token
+    email-super-admin: ${KEYCLOAK_EMAIL_SUPER_ADMIN}
+    username-super-admin: ${KEYCLOAK_USERNAME_SUPER_ADMIN}
+    password-super-admin: ${KEYCLOAK_PASSWORD_SUPER_ADMIN}
+    first-name-super-admin: ${KEYCLOAK_FIRST_NAME_SUPER_ADMIN}
+    last-name-super-admin: ${KEYCLOAK_LAST_NAME_SUPER_ADMIN}
+
+  storage:
+    file:
+      profile-picture: ${PROFILE_PICTURE_PATH}
