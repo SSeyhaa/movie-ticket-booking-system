@@ -1,0 +1,72 @@
+server:
+  servlet:
+    context-path: /user-service
+  port: 0
+
+spring:
+  application:
+    name: user-service
+
+  # Use H2 instead of PostgreSQL
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  liquibase:
+    enabled: false
+
+  quartz:
+    job-store-type: memory
+
+  cloud:
+    discovery:
+      enabled: false
+    stream:
+      enabled: false
+    openfeign:
+      client:
+        config:
+          keycloak:
+            url: http://localhost:9999
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9999/realms/test
+          jwk-set-uri: http://localhost:9999/realms/test/protocol/openid-connect/certs
+
+eureka:
+  client:
+    enabled: false
+
+logging:
+  level:
+    root: warn
+
+app:
+  keycloak:
+    server-url: http://localhost:9999
+    realm: test
+    client-id: test-client
+    client-secret: test-secret
+    token-url: http://localhost:9999/realms/test/protocol/openid-connect/token
+    email-super-admin: test@test.com
+    username-super-admin: test
+    password-super-admin: test
+    first-name-super-admin: test
+    last-name-super-admin: test
+
+  storage:
+    file:
+      profile-picture: ./test-storage
