@@ -50,9 +50,6 @@ eureka:
   client:
     enabled: false
 
-logging:
-  level:
-    root: warn
 
 app:
   keycloak:
