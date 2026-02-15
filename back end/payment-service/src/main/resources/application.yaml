@@ -1,60 +1,11 @@
 server:
-  port: ${PAYMENT_SERVICE_PORT}
   servlet:
-    context-path: ${PAYMENT_SERVICE_CONTEXT_PATH}
-
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: ${DISCOVERY_SERVICE_URL}
-  instance:
-    preferIpAddress: true
-
-
-logging:
-  level:
-    root: info # default logger that applies to all packages in the application
-    org.springframework: debug
-  file:
-    name: ./${spring.application.name}/logs/app.log
-  logback:
-    rollingpolicy:
-      file-name-pattern: app_%d{dd-MM-yyyy}_%i.log
-      max-file-size: 10MB # Maximum size for each log file (e.g., 10MB). A new file is created when reached
-      total-size-cap: 1GB # Total size limit for all log files (e.g., 1GB), the Older files are deleted if exceeded
-      max-history: 7 # Maximum number of log files to keep (e.g., 7 days), the Older files were deleted to maintain this limit.
-#      clean-history-on-start: true # Clean up the history log files on application start
+    context-path: /payment-service
 
 
 spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE}
   application:
-    name: ${PAYMENT_SERVICE_NAME}
-
-  threads:
-    virtual:
-      enabled: true
-
-
-  # Database configuration
-  datasource:
-    url: jdbc:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/${PAYMENT_SERVICE_DATABASE}
-    username: ${DATABASE_USERNAME}
-    password: ${DATABASE_PASSWORD}
-    driver-class-name: org.postgresql.Driver
-    hikari:
-      minimum-idle: 5 # minimum number of idle connections in the pool
-      maximum-pool-size: 20 # maximum number of connections in the pool
-      connection-timeout: 30000 # wait for a connection to become available from the pool.
-      idle-timeout: 300000 # close and remove idle connections that greater than {minimum-idle} in the pool
-      max-lifetime: 1800000 # restart the connection after this duration
-
-
-  # JPA configuration
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
+    name: payment-service
 
